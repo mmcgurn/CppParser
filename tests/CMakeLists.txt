@@ -9,10 +9,13 @@ FetchContent_MakeAvailable(googletest)
 
 # Define a test exe
 add_executable(cppParserTests
-        factoryTests.cpp mockFactory.hpp registrarTests.cpp yamlParserTests.cpp)
+        factoryTests.cpp registrarTests.cpp yamlParserTests.cpp)
 target_link_libraries(cppParserTests PUBLIC gtest gmock gtest_main cppParserLibrary)
+
+# define a header library for testing reuse
 add_library(cppParserTestLibrary INTERFACE)
-target_include_directories(cppParserTestLibrary INTERFACE tests)
+target_include_directories(cppParserTestLibrary INTERFACE ${CMAKE_CURRENT_LIST_DIR}/include)
+target_link_libraries(cppParserTests PUBLIC cppParserTestLibrary)
 
 gtest_discover_tests(cppParserTests
         # set a working directory so your project root so that you can find test data via paths relative to the project root
