@@ -11,7 +11,8 @@ FetchContent_MakeAvailable(googletest)
 add_executable(cppParserTests
         factoryTests.cpp mockFactory.hpp registrarTests.cpp yamlParserTests.cpp)
 target_link_libraries(cppParserTests PUBLIC gtest gmock gtest_main cppParserLibrary)
-
+add_library(cppParserTestLibrary INTERFACE)
+target_include_directories(cppParserTestLibrary INTERFACE tests)
 
 gtest_discover_tests(cppParserTests
         # set a working directory so your project root so that you can find test data via paths relative to the project root
