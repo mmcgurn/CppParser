@@ -67,11 +67,11 @@ TEST(RegistrarTests, ShouldRegisterClassWithArgumentIdentifiersAndRecordInLog) {
 
     // act
     cppParser::Registrar<MockInterface>::Register<MockClass2>(false,
-                                                                   "MockClass2",
-                                                                   "this is a simple mock class",
-                                                                   cppParser::ArgumentIdentifier<std::string>{.inputName = "dog", .description = "this is a string"},
-                                                                   cppParser::ArgumentIdentifier<int>{.inputName = "cat", .description = "this is a int"},
-                                                                   cppParser::ArgumentIdentifier<MockInterface>{.inputName = "bird", .description = "this is a shared pointer to an interface"});
+                                                              "MockClass2",
+                                                              "this is a simple mock class",
+                                                              cppParser::ArgumentIdentifier<std::string>{.inputName = "dog", .description = "this is a string"},
+                                                              cppParser::ArgumentIdentifier<int>{.inputName = "cat", .description = "this is a int"},
+                                                              cppParser::ArgumentIdentifier<MockInterface>{.inputName = "bird", .description = "this is a shared pointer to an interface"});
 
     // assert
     auto createMethod = Registrar<MockInterface>::GetCreateMethod("MockClass2");
@@ -98,11 +98,11 @@ TEST(RegistrarTests, ShouldRegisterClassWithArgumentIdentifiersAndOptAndRecordIn
 
     // act
     cppParser::Registrar<MockInterface>::Register<MockClass2>(false,
-                                                                   "MockClass2a",
-                                                                   "this is a simple mock class",
-                                                                   cppParser::ArgumentIdentifier<std::string>{"dog", "this is a string", true},
-                                                                   cppParser::ArgumentIdentifier<int>{"cat", "this is a int", true},
-                                                                   cppParser::ArgumentIdentifier<MockInterface>{"bird", "this is a shared pointer to an interface", true});
+                                                              "MockClass2a",
+                                                              "this is a simple mock class",
+                                                              cppParser::ArgumentIdentifier<std::string>{"dog", "this is a string", true},
+                                                              cppParser::ArgumentIdentifier<int>{"cat", "this is a int", true},
+                                                              cppParser::ArgumentIdentifier<MockInterface>{"bird", "this is a shared pointer to an interface", true});
 
     // assert
     auto createMethod = Registrar<MockInterface>::GetCreateMethod("MockClass2a");
@@ -141,11 +141,11 @@ TEST(RegistrarTests, ShouldRegisterDefaultClassWithArgumentIdentifiersAndRecordI
 
     // act
     cppParser::Registrar<MockInterface4>::Register<MockClass4>(true,
-                                                                    "MockClass4",
-                                                                    "this is a simple mock class",
-                                                                    cppParser::ArgumentIdentifier<std::string>{"dog", "this is a string"},
-                                                                    cppParser::ArgumentIdentifier<int>{"cat", "this is a int"},
-                                                                    cppParser::ArgumentIdentifier<MockInterface4>{"bird", "this is a shared pointer to an interface"});
+                                                               "MockClass4",
+                                                               "this is a simple mock class",
+                                                               cppParser::ArgumentIdentifier<std::string>{"dog", "this is a string"},
+                                                               cppParser::ArgumentIdentifier<int>{"cat", "this is a int"},
+                                                               cppParser::ArgumentIdentifier<MockInterface4>{"bird", "this is a shared pointer to an interface"});
 
     // assert
     auto createMethod = Registrar<MockInterface4>::GetCreateMethod("MockClass4");
@@ -174,20 +174,20 @@ class MockClass5b : public MockInterface5 {
 TEST(RegistrarTests, ShouldNotAllowDoubleDefaultRegistar) {
     // arrange
     cppParser::Registrar<MockInterface5>::Register<MockClass5a>(true,
-                                                                     "MockClass5a",
-                                                                     "this is a simple mock class",
-                                                                     cppParser::ArgumentIdentifier<std::string>{"dog", "this is a string"},
-                                                                     cppParser::ArgumentIdentifier<int>{"cat", "this is a int"},
-                                                                     cppParser::ArgumentIdentifier<MockInterface5>{"bird", "this is a shared pointer to an interface"});
+                                                                "MockClass5a",
+                                                                "this is a simple mock class",
+                                                                cppParser::ArgumentIdentifier<std::string>{"dog", "this is a string"},
+                                                                cppParser::ArgumentIdentifier<int>{"cat", "this is a int"},
+                                                                cppParser::ArgumentIdentifier<MockInterface5>{"bird", "this is a shared pointer to an interface"});
 
     // act
     // assert
     ASSERT_THROW(cppParser::Registrar<MockInterface5>::Register<MockClass5b>(true,
-                                                                                  "MockClass5b",
-                                                                                  "this is a simple mock class",
-                                                                                  cppParser::ArgumentIdentifier<std::string>{"dog", "this is a string"},
-                                                                                  cppParser::ArgumentIdentifier<int>{"cat", "this is a int"},
-                                                                                  cppParser::ArgumentIdentifier<MockInterface5>{"bird", "this is a shared pointer to an interface"}),
+                                                                             "MockClass5b",
+                                                                             "this is a simple mock class",
+                                                                             cppParser::ArgumentIdentifier<std::string>{"dog", "this is a string"},
+                                                                             cppParser::ArgumentIdentifier<int>{"cat", "this is a int"},
+                                                                             cppParser::ArgumentIdentifier<MockInterface5>{"bird", "this is a shared pointer to an interface"}),
                  std::invalid_argument);
 }
 

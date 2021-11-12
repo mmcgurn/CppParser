@@ -3,8 +3,8 @@
 
 #include <map>
 #include <string>
-#include "gmock/gmock.h"
 #include "factory.hpp"
+#include "gmock/gmock.h"
 
 using namespace cppParser;
 

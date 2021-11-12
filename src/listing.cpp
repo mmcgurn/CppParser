@@ -1,9 +1,7 @@
 #include "listing.hpp"
 #include "demangler.hpp"
 
-void cppParser::Listing::RecordListing(cppParser::Listing::ClassEntry entry) {
-    entries[entry.interface].push_back(std::move(entry));
-}
+void cppParser::Listing::RecordListing(cppParser::Listing::ClassEntry entry) { entries[entry.interface].push_back(std::move(entry)); }
 
 cppParser::Listing &cppParser::Listing::Get() {
     if (listing == nullptr) {
@@ -14,9 +12,9 @@ cppParser::Listing &cppParser::Listing::Get() {
 }
 
 std::ostream &cppParser::operator<<(std::ostream &os, const cppParser::Listing &listing) {
-    for (const auto& interface: listing.entries) {
+    for (const auto &interface : listing.entries) {
         os << "# " << Demangler::Demangle(interface.first) << std::endl;
-        for (const auto& classEntry: interface.second) {
+        for (const auto &classEntry : interface.second) {
             os << classEntry;
         }
     }
@@ -37,19 +35,17 @@ std::ostream &cppParser::operator<<(std::ostream &os, const cppParser::Listing::
 }
 
 std::ostream &cppParser::operator<<(std::ostream &os, const cppParser::Listing::ClassEntry &classEntry) {
-    os << "## " << classEntry.className << (classEntry.defaultConstructor ? "*" : "") << std::endl
-       << classEntry.description << std::endl << std::endl;
-    for (const auto& argumentEntry: classEntry.arguments) {
+    os << "## " << classEntry.className << (classEntry.defaultConstructor ? "*" : "") << std::endl << classEntry.description << std::endl << std::endl;
+    for (const auto &argumentEntry : classEntry.arguments) {
         os << argumentEntry;
     }
     return os;
 }
 
-void cppParser::Listing::ReplaceListing(std::shared_ptr <Listing> replacementListing) { listing = std::move(replacementListing); }
+void cppParser::Listing::ReplaceListing(std::shared_ptr<Listing> replacementListing) { listing = std::move(replacementListing); }
 
 bool cppParser::Listing::ClassEntry::operator==(const cppParser::Listing::ClassEntry &other) const {
-    return className == other.className && interface == other.interface && description == other.description &&
-           arguments == other.arguments;
+    return className == other.className && interface == other.interface && description == other.description && arguments == other.arguments;
 }
 
 bool cppParser::Listing::ArgumentEntry::operator==(const cppParser::Listing::ArgumentEntry &other) const {

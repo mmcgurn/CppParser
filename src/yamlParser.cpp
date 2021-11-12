@@ -2,7 +2,7 @@
 
 #include <utility>
 
-cppParser::YamlParser::YamlParser(const YAML::Node& yamlConfiguration, std::string nodePath, std::string type, std::function<std::filesystem::path (std::string)> locateFileFunction)
+cppParser::YamlParser::YamlParser(const YAML::Node& yamlConfiguration, std::string nodePath, std::string type, std::function<std::filesystem::path(std::string)> locateFileFunction)
     : type(std::move(type)), nodePath(std::move(nodePath)), yamlConfiguration(yamlConfiguration), locateFileFunction(std::move(locateFileFunction)) {
     // store each child in the map with zero usages
     for (auto childNode : yamlConfiguration) {
@@ -10,22 +10,20 @@ cppParser::YamlParser::YamlParser(const YAML::Node& yamlConfiguration, std::stri
     }
 }
 
-cppParser::YamlParser::YamlParser(YAML::Node yamlConfiguration, std::function<std::filesystem::path (std::string)> locateFileFunction, const std::map<std::string, std::string>& overwriteParameters)
+cppParser::YamlParser::YamlParser(YAML::Node yamlConfiguration, std::function<std::filesystem::path(std::string)> locateFileFunction, const std::map<std::string, std::string>& overwriteParameters)
     : YamlParser(yamlConfiguration, "root", "", std::move(locateFileFunction)) {
     // override/add any of the values in the overwriteParameters
     for (const auto& pair : overwriteParameters) {
         ReplaceValue(yamlConfiguration, pair.first, pair.second);
     }
-
 }
 
-cppParser::YamlParser::YamlParser(const std::string& yamlString, std::function<std::filesystem::path (std::string)> locateFileFunction, const std::map<std::string, std::string>& overwriteParameters)
+cppParser::YamlParser::YamlParser(const std::string& yamlString, std::function<std::filesystem::path(std::string)> locateFileFunction, const std::map<std::string, std::string>& overwriteParameters)
     : YamlParser(YAML::Load(yamlString), std::move(locateFileFunction), overwriteParameters) {}
 
-cppParser::YamlParser::YamlParser(const std::filesystem::path& filePath, std::function<std::filesystem::path (std::string)> locateFileFunction, const std::map<std::string, std::string>& overwriteParameters)
-    : YamlParser(YAML::LoadFile(filePath), std::move(locateFileFunction), overwriteParameters) {
-
-}
+cppParser::YamlParser::YamlParser(const std::filesystem::path& filePath, std::function<std::filesystem::path(std::string)> locateFileFunction,
+                                  const std::map<std::string, std::string>& overwriteParameters)
+    : YamlParser(YAML::LoadFile(filePath), std::move(locateFileFunction), overwriteParameters) {}
 
 std::shared_ptr<cppParser::Factory> cppParser::YamlParser::GetFactory(const std::string& name) const {
     // Check to see if the child factory has already been created
@@ -137,9 +135,9 @@ std::filesystem::path cppParser::YamlParser::Get(const cppParser::ArgumentIdenti
 
     if (identifier.optional && file.empty()) {
         return {};
-    } else if(locateFileFunction){
+    } else if (locateFileFunction) {
         return locateFileFunction(file);
-    }else{
+    } else {
         return file;
     }
 }
