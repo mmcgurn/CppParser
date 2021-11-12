@@ -38,6 +38,10 @@ default_target_compile_options(cppParserLibrary)
 add_subdirectory(src)
 target_link_libraries(cppParserLibrary PUBLIC yaml-cpp)
 
+# Add a library that can be used for testing
+add_library(cppParserTestLibrary INTERFACE tests/include/mockFactory.hpp)
+target_include_directories(cppParserTestLibrary INTERFACE ${CMAKE_CURRENT_LIST_DIR}/tests/include)
+
 # Check if we should enable testing options
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
