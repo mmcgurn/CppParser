@@ -8,7 +8,7 @@
 
 using namespace cppParser;
 
-namespace cppParserTesting::parser {
+namespace cppParserTesting {
 
 MATCHER_P(NameIs, name, "") { return (arg.inputName == name); }
 

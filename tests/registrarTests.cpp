@@ -6,7 +6,7 @@
 
 using ::testing::AtLeast;
 
-namespace cppParserTesting::parser {
+namespace cppParserTesting {
 
 using namespace cppParser;
 

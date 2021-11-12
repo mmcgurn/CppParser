@@ -4,7 +4,7 @@
 #include "gtest/gtest.h"
 #include "yamlParser.hpp"
 
-namespace cppParserTesting::parser {
+namespace cppParserTesting {
 
 #define REMOTE_URL "https://raw.githubusercontent.com/UBCHREST/ablate/main/tests/ablateLibrary/inputs/eos/thermo30.dat"
 
