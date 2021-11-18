@@ -832,4 +832,4 @@ TEST(YamlParserTests, ShouldReturnSelfFactoryWhenInputNameIsEmpty) {
     ASSERT_EQ("", selfFactory->GetClassType());
 }
 
-}  // namespace cppParserTesting::parser
+}  // namespace cppParserTesting

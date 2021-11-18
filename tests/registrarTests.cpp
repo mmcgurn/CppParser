@@ -295,4 +295,4 @@ TEST(RegistrarTests, ShouldRegisterFunctionForClassAndRecordInLog) {
     Listing::ReplaceListing(nullptr);
 }
 
-}  // namespace cppParserTesting::parser
+}  // namespace cppParserTesting

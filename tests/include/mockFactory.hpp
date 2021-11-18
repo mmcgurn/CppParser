@@ -29,6 +29,6 @@ class MockFactory : public cppParser::Factory {
     MOCK_METHOD(bool, Contains, (const std::string& name), (override, const));
     MOCK_METHOD(std::unordered_set<std::string>, GetKeys, (), (const, override));
 };
-}  // namespace cppParserTesting::parser
+}  // namespace cppParserTesting
 
 #endif  // ABLATELIBRARY_MOCKFACTORY_HPP

@@ -43,10 +43,9 @@
         cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(true, #classFullName, description, __VA_ARGS__); \
     RESOLVE(interfaceTypeFullName, classFullName)
 
-#define REGISTERDEFAULT_WITHOUT_ARGUMENTS(interfaceTypeFullName, classFullName, description)                                               \
-    template <>                                                                                                               \
-    bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =                                   \
-        cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(true, #classFullName, description); \
+#define REGISTERDEFAULT_WITHOUT_ARGUMENTS(interfaceTypeFullName, classFullName, description)                                                                                                         \
+    template <>                                                                                                                                                                                      \
+    bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered = cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(true, #classFullName, description); \
     RESOLVE(interfaceTypeFullName, classFullName)
 
 #define REGISTER_WITHOUT_ARGUMENTS(interfaceTypeFullName, classFullName, description)                                                                                                                 \

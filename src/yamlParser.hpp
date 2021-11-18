@@ -3,9 +3,9 @@
 
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
+#include <functional>
 #include <iostream>
 #include "factory.hpp"
-#include <functional>
 
 namespace cppParser {
 class YamlParser : public Factory {
@@ -15,8 +15,7 @@ class YamlParser : public Factory {
     const YAML::Node yamlConfiguration;
     mutable std::map<std::string, int> nodeUsages;
     mutable std::map<std::string, std::shared_ptr<YamlParser>> childFactories;
-    const std::function<std::filesystem::path (std::string)> locateFileFunction;
-
+    const std::function<std::filesystem::path(std::string)> locateFileFunction;
 
     /***
      * private constructor to create a sub factory
@@ -24,7 +23,7 @@ class YamlParser : public Factory {
      * @param nodePath
      * @param type
      */
-    YamlParser(const YAML::Node& yamlConfiguration, std::string nodePath, std::string type, std::function<std::filesystem::path (std::string)> = {});
+    YamlParser(const YAML::Node& yamlConfiguration, std::string nodePath, std::string type, std::function<std::filesystem::path(std::string)> = {});
     inline void MarkUsage(const std::string& key) const {
         if (!key.empty()) {
             nodeUsages[key]++;
@@ -76,20 +75,20 @@ class YamlParser : public Factory {
     static void ReplaceValue(YAML::Node& yamlConfiguration, const std::string& key, const std::string& value);
 
    public:
-    explicit YamlParser(YAML::Node yamlConfiguration, std::function<std::filesystem::path (std::string)> = {}, const std::map<std::string, std::string>& overwriteParameters = {});
+    explicit YamlParser(YAML::Node yamlConfiguration, std::function<std::filesystem::path(std::string)> = {}, const std::map<std::string, std::string>& overwriteParameters = {});
     ~YamlParser() override = default;
 
     /***
      * Direct creation using a yaml string
      * @param yamlString
      */
-    explicit YamlParser(const std::string& yamlString, std::function<std::filesystem::path (std::string)> = {}, const std::map<std::string, std::string>& overwriteParameters = {});
+    explicit YamlParser(const std::string& yamlString, std::function<std::filesystem::path(std::string)> = {}, const std::map<std::string, std::string>& overwriteParameters = {});
 
     /***
      * Read in file from system
      * @param filePath
      */
-    explicit YamlParser(const std::filesystem::path& filePath, std::function<std::filesystem::path (std::string)> = {},const std::map<std::string, std::string>& overwriteParameters = {});
+    explicit YamlParser(const std::filesystem::path& filePath, std::function<std::filesystem::path(std::string)> = {}, const std::map<std::string, std::string>& overwriteParameters = {});
 
     /* gets the class type represented by this factory */
     const std::string& GetClassType() const override { return type; }
@@ -144,8 +143,7 @@ class YamlParser : public Factory {
     /* get all children as factory */
     std::vector<std::shared_ptr<Factory>> GetFactorySequence(const std::string& name) const override;
 
-    bool Contains(const std::string& name) const override { return yamlConfiguration.IsMap() &&
-                                                                   yamlConfiguration[name] != nullptr; };
+    bool Contains(const std::string& name) const override { return yamlConfiguration.IsMap() && yamlConfiguration[name] != nullptr; };
 
     std::unordered_set<std::string> GetKeys() const override;
 
