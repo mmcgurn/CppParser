@@ -27,10 +27,10 @@ jobs:
           fetch-depth: 0
 
       - name: Building tests
-        run: docker build . --file DockerTestFile --tag cppParserTestImage
+        run: docker build . --file DockerTestFile --tag cpp_parser_test_image
 
       - name: Get the version from the build file
-        run: echo "VERSION=$(docker run --rm cppParserTestImage awk -F= '/CMAKE_PROJECT_VERSION:/ {print $NF}' CMakeCache.txt )" >> $GITHUB_ENV
+        run: echo "VERSION=$(docker run --rm cpp_parser_test_image awk -F= '/CMAKE_PROJECT_VERSION:/ {print $NF}' CMakeCache.txt )" >> $GITHUB_ENV
 
       - name: Check for version
         run: |
@@ -43,7 +43,7 @@ jobs:
           fi
 
       - name: Run tests
-        run: docker run --rm cppParserTestImage
+        run: docker run --rm cpp_parser_test_image
 
   tag-version:
     # Ensure test job passes before pushing image.
@@ -58,10 +58,10 @@ jobs:
           submodules: recursive
 
       - name: Build the docker image
-        run: docker build . --file DockerTestFile --tag cppParserTestImage
+        run: docker build . --file DockerTestFile --tag cpp_parser_test_image
 
       - name: Get the version from the build file
-        run: echo "VERSION=$(docker run --rm cppParserTestImage awk -F= '/CMAKE_PROJECT_VERSION:/ {print $NF}' CMakeCache.txt )" >> $GITHUB_ENV
+        run: echo "VERSION=$(docker run --rm cpp_parser_test_image awk -F= '/CMAKE_PROJECT_VERSION:/ {print $NF}' CMakeCache.txt )" >> $GITHUB_ENV
 
       - name: set version and push tag
         id: tag_version
