@@ -1,0 +1,17 @@
+FROM ubuntu:hirsute
+
+# Install dependencies
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update
+RUN apt-get install -y build-essential git python3 python3-distutils clang-format cmake
+
+# Copy over the source
+COPY . /source
+WORKDIR /build
+
+# Configure & build
+run cmake -S /source/ -B .
+run make -j $(nproc)
+
+# Specify Entry Point for tests
+CMD bash -c "make format-check && ctest"
