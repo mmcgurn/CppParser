@@ -19,59 +19,91 @@
     template <>                                       \
     std::shared_ptr<interfaceTypeFullName> cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Resolved = cppParser::ResolveAndCreate<interfaceTypeFullName>(nullptr)
 
-#define REGISTER_FACTORY_CONSTRUCTOR(interfaceTypeFullName, classFullName, description)                                                 \
-    template <>                                                                                                                         \
-    bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =                                             \
-        cppParser::Registrar<interfaceTypeFullName>::RegisterWithFactoryConstructor<classFullName>(false, #classFullName, description); \
-    RESOLVE(interfaceTypeFullName, classFullName)
-
-#define REGISTER_FACTORY_CONSTRUCTOR_DEFAULT(interfaceTypeFullName, classFullName, description)                                        \
-    template <>                                                                                                                        \
-    bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =                                            \
-        cppParser::Registrar<interfaceTypeFullName>::RegisterWithFactoryConstructor<classFullName>(true, #classFullName, description); \
-    RESOLVE(interfaceTypeFullName, classFullName)
-
+/**
+ * Register a class that takes a predefined set of arguments
+ */
 #define REGISTER(interfaceTypeFullName, classFullName, description, ...)                                                       \
     template <>                                                                                                                \
     bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =                                    \
         cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(false, #classFullName, description, __VA_ARGS__); \
     RESOLVE(interfaceTypeFullName, classFullName)
 
-#define REGISTERDEFAULT(interfaceTypeFullName, classFullName, description, ...)                                               \
+/**
+ * Register a class that takes a predefined set of arguments and make it the default implementation
+ */
+#define REGISTER_DEFAULT(interfaceTypeFullName, classFullName, description, ...)                                              \
     template <>                                                                                                               \
     bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =                                   \
         cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(true, #classFullName, description, __VA_ARGS__); \
     RESOLVE(interfaceTypeFullName, classFullName)
 
-#define REGISTERDEFAULT_WITHOUT_ARGUMENTS(interfaceTypeFullName, classFullName, description)                                                                                                         \
-    template <>                                                                                                                                                                                      \
-    bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered = cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(true, #classFullName, description); \
+/**
+ * Register a class whose constructor takes a factory
+ */
+#define REGISTER_FACTORY_CONSTRUCTOR(interfaceTypeFullName, classFullName, description)                                                 \
+    template <>                                                                                                                         \
+    bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =                                             \
+        cppParser::Registrar<interfaceTypeFullName>::RegisterWithFactoryConstructor<classFullName>(false, #classFullName, description); \
     RESOLVE(interfaceTypeFullName, classFullName)
 
+/**
+ * Register a class whose constructor takes a factory and make it the default implementation
+ */
+#define REGISTER_DEFAULT_FACTORY_CONSTRUCTOR_(interfaceTypeFullName, classFullName, description)                                       \
+    template <>                                                                                                                        \
+    bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =                                            \
+        cppParser::Registrar<interfaceTypeFullName>::RegisterWithFactoryConstructor<classFullName>(true, #classFullName, description); \
+    RESOLVE(interfaceTypeFullName, classFullName)
+
+/**
+ * Register a class without constructor arguments
+ */
 #define REGISTER_WITHOUT_ARGUMENTS(interfaceTypeFullName, classFullName, description)                                                                                                                 \
     template <>                                                                                                                                                                                       \
     bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered = cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(false, #classFullName, description); \
     RESOLVE(interfaceTypeFullName, classFullName)
 
+/**
+ * Register a class without constructor arguments and make it the default implementation
+ */
+#define REGISTER_DEFAULT_WITHOUT_ARGUMENTS(interfaceTypeFullName, classFullName, description)                                                                                                        \
+    template <>                                                                                                                                                                                      \
+    bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered = cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(true, #classFullName, description); \
+    RESOLVE(interfaceTypeFullName, classFullName)
+
+/**
+ * Register a class and a function.  This function is passed a factory and should return a shared_ptr to the class.
+ */
 #define REGISTER_FACTORY_FUNCTION(interfaceTypeFullName, classFullName, description, function)                                                 \
     template <>                                                                                                                                \
     bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =                                                    \
         cppParser::Registrar<interfaceTypeFullName>::RegisterWithFactoryFunction<classFullName>(false, #classFullName, description, function); \
     RESOLVE(interfaceTypeFullName, classFullName)
 
-#define REGISTER_FACTORY_FUNCTION_DEFAULT(interfaceTypeFullName, classFullName, description, function)                                        \
+/**
+ * Register a class and a function and make it the default implementation.  This function is passed a factory and should return a shared_ptr to the class.
+ */
+#define REGISTER_DEFAULT_FACTORY_FUNCTION(interfaceTypeFullName, classFullName, description, function)                                        \
     template <>                                                                                                                               \
     bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =                                                   \
         cppParser::Registrar<interfaceTypeFullName>::RegisterWithFactoryFunction<classFullName>(true, #classFullName, description, function); \
     RESOLVE(interfaceTypeFullName, classFullName)
 
+/**
+ * Register a class with a single arguments as pass through and make it the default implementation.  This results the specified argument being passed directly to the constructor and is used
+ * to element a parser object that holds only one value.
+ */
 #define REGISTER_PASS_THROUGH(interfaceTypeFullName, classFullName, description, argumentType)                                                                   \
     template <>                                                                                                                                                  \
     bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =                                                                      \
         cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(false, #classFullName, description, cppParser::ArgumentIdentifier<argumentType>{}); \
     RESOLVE(interfaceTypeFullName, classFullName)
 
-#define REGISTERDEFAULT_PASS_THROUGH(interfaceTypeFullName, classFullName, description, argumentType)                                                           \
+/**
+ * Register a class with a single arguments as pass through.  This results the specified argument being passed directly to the constructor and is used
+ * to element a parser object that holds only one value.
+ */
+#define REGISTER_DEFAULT_PASS_THROUGH(interfaceTypeFullName, classFullName, description, argumentType)                                                          \
     template <>                                                                                                                                                 \
     bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =                                                                     \
         cppParser::Registrar<interfaceTypeFullName>::Register<classFullName>(true, #classFullName, description, cppParser::ArgumentIdentifier<argumentType>{}); \
