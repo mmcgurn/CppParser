@@ -49,7 +49,7 @@
 /**
  * Register a class whose constructor takes a factory and make it the default implementation
  */
-#define REGISTER_DEFAULT_FACTORY_CONSTRUCTOR_(interfaceTypeFullName, classFullName, description)                                       \
+#define REGISTER_DEFAULT_FACTORY_CONSTRUCTOR(interfaceTypeFullName, classFullName, description)                                        \
     template <>                                                                                                                        \
     bool cppParser::RegisteredInFactory<interfaceTypeFullName, classFullName>::Registered =                                            \
         cppParser::Registrar<interfaceTypeFullName>::RegisterWithFactoryConstructor<classFullName>(true, #classFullName, description); \
