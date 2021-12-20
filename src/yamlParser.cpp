@@ -148,8 +148,9 @@ void cppParser::YamlParser::ReplaceValue(YAML::Node& yamlConfiguration, const st
     // Check to see if there are any separators in the key
     auto separator = key.find("::");
     if (separator == std::string::npos) {
-        // we are at the end, so just apply it
-        yamlConfiguration[key] = value;
+        // Allow the yaml parser to parse the string like normal
+        auto node = YAML::Load(value);
+        yamlConfiguration[key] = node;
     } else {
         // strip off the first part of the key and try again
         auto thisKey = key.substr(0, separator);
