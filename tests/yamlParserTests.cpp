@@ -693,7 +693,7 @@ TEST(YamlParserTests, ShouldAllowOverWrittenValues) {
 
     // assert
     ASSERT_EQ("44", yamlParser->GetByName<std::string>("item1"));
-    std::vector<double> expectedVector {3, 2};
+    std::vector<double> expectedVector{3, 2};
     ASSERT_EQ(expectedVector, yamlParser->GetFactory("item2")->GetByName<std::vector<double>>("item4"));
     ASSERT_EQ("77", yamlParser->GetFactory("item2")->GetFactory("item5")->GetFactory("item6")->GetByName<std::string>("item7"));
     ASSERT_EQ("100", yamlParser->GetFactorySequence("item9")[1]->GetByName<std::string>("item10"));
