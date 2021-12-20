@@ -673,7 +673,7 @@ TEST(YamlParserTests, ShouldAllowOverWrittenValues) {
     yaml << "item1: 22" << std::endl;
     yaml << "item2:" << std::endl;
     yaml << "  item3: 3" << std::endl;
-    yaml << "  item4: 5" << std::endl;
+    yaml << "  item4: [1]" << std::endl;
     yaml << "  item5: " << std::endl;
     yaml << "    item6: {} " << std::endl;
     yaml << "item9: " << std::endl;
@@ -683,7 +683,7 @@ TEST(YamlParserTests, ShouldAllowOverWrittenValues) {
 
     auto params = std::map<std::string, std::string>{
         {"item1", "44"},
-        {"item2::item4", "55"},
+        {"item2::item4", "[3, 2]"},
         {"item2::item5::item6::item7", "77"},
         {"item9::[1]::item10", "100"},
     };
@@ -693,7 +693,8 @@ TEST(YamlParserTests, ShouldAllowOverWrittenValues) {
 
     // assert
     ASSERT_EQ("44", yamlParser->GetByName<std::string>("item1"));
-    ASSERT_EQ("55", yamlParser->GetFactory("item2")->GetByName<std::string>("item4"));
+    std::vector<double> expectedVector{3, 2};
+    ASSERT_EQ(expectedVector, yamlParser->GetFactory("item2")->GetByName<std::vector<double>>("item4"));
     ASSERT_EQ("77", yamlParser->GetFactory("item2")->GetFactory("item5")->GetFactory("item6")->GetByName<std::string>("item7"));
     ASSERT_EQ("100", yamlParser->GetFactorySequence("item9")[1]->GetByName<std::string>("item10"));
 
@@ -703,7 +704,7 @@ TEST(YamlParserTests, ShouldAllowOverWrittenValues) {
     yamlUpdated << "item1: 44" << std::endl;
     yamlUpdated << "item2:" << std::endl;
     yamlUpdated << "  item3: 3" << std::endl;
-    yamlUpdated << "  item4: 55" << std::endl;
+    yamlUpdated << "  item4: [3, 2]" << std::endl;
     yamlUpdated << "  item5:" << std::endl;
     yamlUpdated << "    item6: {item7: 77}" << std::endl;
     yamlUpdated << "item9:" << std::endl;
