@@ -10,6 +10,8 @@ target_sources(cppParserLibrary
         yamlParser.cpp
         demangler.hpp
         demangler.cpp
+        instanceTracker.hpp
+        instanceTracker.cpp
         )
 
 target_include_directories(cppParserLibrary PUBLIC ${CMAKE_CURRENT_LIST_DIR})
