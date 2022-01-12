@@ -2,9 +2,11 @@
 #define CPPPARSER_INSTANCETRACKER_HPP
 
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
+
 namespace cppParser {
 
 class Factory;
