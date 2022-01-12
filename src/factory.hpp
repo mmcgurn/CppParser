@@ -10,6 +10,7 @@
 #include <unordered_set>
 #include <vector>
 #include "argumentIdentifier.hpp"
+#include "instanceTracker.hpp"
 
 namespace cppParser {
 
@@ -18,7 +19,11 @@ template <typename Interface>
 std::shared_ptr<Interface> ResolveAndCreate(std::shared_ptr<Factory> factory);
 
 class Factory {
+   protected:
+    mutable std::weak_ptr<InstanceTracker> instanceTracker;
+
    public:
+    explicit Factory(std::weak_ptr<InstanceTracker> instanceTracker = {}) : instanceTracker(instanceTracker) {}
     virtual ~Factory() = default;
 
     /* return a factory that serves as the root of the requested item */
@@ -61,6 +66,12 @@ class Factory {
 
     virtual std::unordered_set<std::string> GetKeys() const = 0;
 
+    /* provide a virtual IsSameFactory function */
+    virtual bool SameFactory(const Factory& otherFactory) const = 0;
+
+    /* provide a virtual IsSameFactory function */
+    inline bool operator==(const Factory& otherFactory) const { return SameFactory(otherFactory); }
+
     /* produce a shared pointer for the specified interface and type */
     template <typename Interface>
     std::shared_ptr<Interface> Get(const ArgumentIdentifier<Interface>& identifier) const {
@@ -68,8 +79,25 @@ class Factory {
             return {};
         }
 
+        // build the child factory
         auto childFactory = GetFactory(identifier.inputName);
-        return ResolveAndCreate<Interface>(childFactory);
+
+        // check to see if the child factory has already been used to create an instance of the interface
+        if (auto instanceTrackerPtr = instanceTracker.lock()) {
+            if (auto instance = instanceTrackerPtr->GetInstance<Interface>(childFactory)) {
+                return instance;
+            }
+        }
+
+        // build the new instance
+        auto newInstance = ResolveAndCreate<Interface>(childFactory);
+
+        // store the instance if needed
+        if (auto instanceTrackerPtr = instanceTracker.lock()) {
+            instanceTrackerPtr->template SetInstance<Interface>(childFactory, newInstance);
+        }
+
+        return newInstance;
     }
 
     template <typename Interface>

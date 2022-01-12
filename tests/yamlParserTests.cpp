@@ -2,6 +2,7 @@
 #include <memory>
 #include <sstream>
 #include "gtest/gtest.h"
+#include "registrar.hpp"
 #include "yamlParser.hpp"
 
 namespace cppParserTesting {
@@ -831,6 +832,140 @@ TEST(YamlParserTests, ShouldReturnSelfFactoryWhenInputNameIsEmpty) {
     ASSERT_EQ(1.0, selfFactory->Get(ArgumentIdentifier<double>{.inputName = "subItem1"}));
     ASSERT_EQ(2.0, selfFactory->Get(ArgumentIdentifier<double>{.inputName = "subItem2"}));
     ASSERT_EQ("", selfFactory->GetClassType());
+}
+
+TEST(YamlParserTests, ShouldCompareFactories) {
+    // arrange
+    std::stringstream yaml;
+    yaml << "---" << std::endl;
+    yaml << " item1: " << std::endl;
+    yaml << "   subItem1: 1.0" << std::endl;
+    yaml << " item2: " << std::endl;
+    yaml << "   subItem1: 1.0" << std::endl;
+    yaml << " item3: &anchor1" << std::endl;
+    yaml << "   subItem1: 2.0" << std::endl;
+    yaml << " item4: *anchor1" << std::endl;
+
+    auto yamlParser = std::make_shared<YamlParser>(yaml.str());
+
+    // act
+    auto factory1 = yamlParser->GetFactory("item1");
+    auto factory2 = yamlParser->GetFactory("item2");
+    auto factory3 = yamlParser->GetFactory("item3");
+    auto factory4 = yamlParser->GetFactory("item4");
+
+    // assert
+    ASSERT_TRUE(*factory1 == *factory1);
+    ASSERT_FALSE(*factory1 == *factory2);
+    ASSERT_FALSE(*factory1 == *factory3);
+    ASSERT_FALSE(*factory1 == *factory4);
+
+    ASSERT_FALSE(*factory2 == *factory1);
+    ASSERT_TRUE(*factory2 == *factory2);
+    ASSERT_FALSE(*factory2 == *factory3);
+    ASSERT_FALSE(*factory2 == *factory4);
+
+    ASSERT_FALSE(*factory3 == *factory1);
+    ASSERT_FALSE(*factory3 == *factory2);
+    ASSERT_TRUE(*factory3 == *factory3);
+    ASSERT_TRUE(*factory3 == *factory4);
+
+    ASSERT_FALSE(*factory4 == *factory1);
+    ASSERT_FALSE(*factory4 == *factory2);
+    ASSERT_TRUE(*factory4 == *factory3);
+    ASSERT_TRUE(*factory4 == *factory4);
+}
+
+class YamlMockClass1 {};
+
+TEST(YamlParserTests, ShouldReuseInstances) {
+    // arrange
+
+    cppParser::Registrar<YamlMockClass1>::Register<YamlMockClass1>(true, std::string("YamlMockClass1"), "this is a simple mock class");
+
+    std::stringstream yaml;
+    yaml << "---" << std::endl;
+    yaml << " item1: " << std::endl;
+    yaml << "   subItem1: 1.0" << std::endl;
+    yaml << " item2: " << std::endl;
+    yaml << "   subItem1: 1.0" << std::endl;
+    yaml << " item3: &anchor1" << std::endl;
+    yaml << "   subItem1: 2.0" << std::endl;
+    yaml << " item4: *anchor1" << std::endl;
+    yaml << " subFact1:" << std::endl;
+    yaml << "   item5: &anchor2" << std::endl;
+    yaml << "     subItem1: 1.0" << std::endl;
+    yaml << "   item6: *anchor1" << std::endl;
+    yaml << " item7: *anchor2" << std::endl;
+
+    auto yamlParser = std::make_shared<YamlParser>(yaml.str());
+
+    // act
+    auto instance1 = yamlParser->GetByName<YamlMockClass1>("item1");
+    auto instance2 = yamlParser->GetByName<YamlMockClass1>("item2");
+    auto instance3 = yamlParser->GetByName<YamlMockClass1>("item3");
+    auto instance4 = yamlParser->GetByName<YamlMockClass1>("item4");
+    auto subFactory1 = yamlParser->GetFactory("subFact1");
+    auto instance5 = subFactory1->GetByName<YamlMockClass1>("item5");
+    auto instance6 = subFactory1->GetByName<YamlMockClass1>("item6");
+    auto instance7 = yamlParser->GetByName<YamlMockClass1>("item7");
+
+    // assert
+    ASSERT_TRUE(instance1);
+    ASSERT_FALSE(instance1 == instance2);
+    ASSERT_FALSE(instance1 == instance3);
+    ASSERT_FALSE(instance1 == instance4);
+    ASSERT_FALSE(instance1 == instance5);
+    ASSERT_FALSE(instance1 == instance6);
+    ASSERT_FALSE(instance1 == instance7);
+
+    ASSERT_FALSE(instance2 == instance1);
+    ASSERT_TRUE(instance2);
+    ASSERT_FALSE(instance2 == instance3);
+    ASSERT_FALSE(instance2 == instance4);
+    ASSERT_FALSE(instance2 == instance5);
+    ASSERT_FALSE(instance2 == instance6);
+    ASSERT_FALSE(instance2 == instance7);
+
+    ASSERT_FALSE(instance3 == instance1);
+    ASSERT_FALSE(instance3 == instance2);
+    ASSERT_TRUE(instance3);
+    ASSERT_TRUE(instance3 == instance4);
+    ASSERT_FALSE(instance3 == instance5);
+    ASSERT_TRUE(instance3 == instance6);
+    ASSERT_FALSE(instance3 == instance7);
+
+    ASSERT_FALSE(instance4 == instance1);
+    ASSERT_FALSE(instance4 == instance2);
+    ASSERT_TRUE(instance4 == instance3);
+    ASSERT_TRUE(instance4);
+    ASSERT_FALSE(instance4 == instance5);
+    ASSERT_TRUE(instance4 == instance6);
+    ASSERT_FALSE(instance4 == instance7);
+
+    ASSERT_FALSE(instance5 == instance1);
+    ASSERT_FALSE(instance5 == instance2);
+    ASSERT_FALSE(instance5 == instance3);
+    ASSERT_FALSE(instance5 == instance4);
+    ASSERT_TRUE(instance5);
+    ASSERT_FALSE(instance5 == instance6);
+    ASSERT_TRUE(instance5 == instance7);
+
+    ASSERT_FALSE(instance6 == instance1);
+    ASSERT_FALSE(instance6 == instance2);
+    ASSERT_TRUE(instance6 == instance3);
+    ASSERT_TRUE(instance6 == instance4);
+    ASSERT_FALSE(instance6 == instance5);
+    ASSERT_TRUE(instance6);
+    ASSERT_FALSE(instance6 == instance7);
+
+    ASSERT_FALSE(instance7 == instance1);
+    ASSERT_FALSE(instance7 == instance2);
+    ASSERT_FALSE(instance7 == instance3);
+    ASSERT_FALSE(instance7 == instance4);
+    ASSERT_TRUE(instance7 == instance5);
+    ASSERT_FALSE(instance7 == instance6);
+    ASSERT_TRUE(instance7);
 }
 
 }  // namespace cppParserTesting

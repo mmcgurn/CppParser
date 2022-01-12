@@ -17,13 +17,17 @@ class YamlParser : public Factory {
     mutable std::map<std::string, std::shared_ptr<YamlParser>> childFactories;
     const std::function<std::filesystem::path(std::string)> locateFileFunction;
 
+    // The root YamlParser should store a shared ptr to a     mutable std::weak_ptr<InstanceTracker> instanceTracker;
+    std::shared_ptr<InstanceTracker> rootInstanceTracker;
+
     /***
      * private constructor to create a sub factory
      * @param yamlConfiguration
      * @param nodePath
      * @param type
      */
-    YamlParser(const YAML::Node& yamlConfiguration, std::string nodePath, std::string type, std::function<std::filesystem::path(std::string)> = {});
+    YamlParser(const YAML::Node& yamlConfiguration, std::string nodePath, std::string type, std::function<std::filesystem::path(std::string)> = {},
+               std::weak_ptr<InstanceTracker> instanceTracker = {});
     inline void MarkUsage(const std::string& key) const {
         if (!key.empty()) {
             nodeUsages[key]++;
@@ -152,6 +156,17 @@ class YamlParser : public Factory {
 
     /** print a copy of the yaml input as updated **/
     void Print(std::ostream&) const;
+
+    /** provide comparison between factories **/
+    virtual bool SameFactory(const Factory& otherFactory) const override {
+        const auto otherFactoryPtr = dynamic_cast<const YamlParser*>(&otherFactory);
+
+        if (otherFactoryPtr) {
+            return yamlConfiguration == otherFactoryPtr->yamlConfiguration;
+        } else {
+            return false;
+        }
+    }
 };
 }  // namespace cppParser
 
