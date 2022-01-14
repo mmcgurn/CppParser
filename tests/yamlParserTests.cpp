@@ -880,7 +880,6 @@ class YamlMockClass1 {};
 
 TEST(YamlParserTests, ShouldReuseInstances) {
     // arrange
-
     cppParser::Registrar<YamlMockClass1>::Register<YamlMockClass1>(true, std::string("YamlMockClass1"), "this is a simple mock class");
 
     std::stringstream yaml;
@@ -966,6 +965,57 @@ TEST(YamlParserTests, ShouldReuseInstances) {
     ASSERT_TRUE(instance7 == instance5);
     ASSERT_FALSE(instance7 == instance6);
     ASSERT_TRUE(instance7);
+}
+
+class YamlMockClass2 {
+   public:
+    int testInt;
+
+    YamlMockClass2(int testInt) : testInt(testInt) {}
+};
+
+TEST(YamlParserTests, ShouldNotReportUsedChildAsUnusedWhenUsingAnchors) {
+    cppParser::Registrar<YamlMockClass2>::Register<YamlMockClass2>(true, std::string("YamlMockClass1"), "this is a simple mock class", ArgumentIdentifier<int>{.inputName = "testInt"});
+
+    std::stringstream yaml;
+    yaml << "---" << std::endl;
+    yaml << " item1: &anchor" << std::endl;
+    yaml << "   testInt: 1" << std::endl;
+    yaml << " item2: *anchor" << std::endl;
+
+    auto yamlParser = std::make_shared<YamlParser>(yaml.str());
+
+    // act
+    auto instance1 = yamlParser->GetByName<YamlMockClass2>("item1");
+    auto instance2 = yamlParser->GetByName<YamlMockClass2>("item2");
+
+    // assert
+    auto unusedValues = yamlParser->GetUnusedValues();
+    ASSERT_EQ(unusedValues.size(), 0);
+}
+
+TEST(YamlParserTests, ShouldReportSingleInstanceOfUnusedChildrenWhenUsingAnchors) {
+    cppParser::Registrar<YamlMockClass2>::Register<YamlMockClass2>(true, std::string("YamlMockClass1"), "this is a simple mock class", ArgumentIdentifier<int>{.inputName = "testInt"});
+
+    std::stringstream yaml;
+    yaml << "---" << std::endl;
+    yaml << " item1: &anchor" << std::endl;
+    yaml << "   testInt: 1" << std::endl;
+    yaml << "   testInt2: 1" << std::endl;
+    yaml << " item2: *anchor" << std::endl;
+    yaml << " item3: *anchor" << std::endl;
+
+    auto yamlParser = std::make_shared<YamlParser>(yaml.str());
+
+    // act
+    auto instance1 = yamlParser->GetByName<YamlMockClass2>("item1");
+    auto instance2 = yamlParser->GetByName<YamlMockClass2>("item2");
+
+    // assert
+    auto unusedValues = yamlParser->GetUnusedValues();
+    ASSERT_EQ(unusedValues.size(), 2);
+    ASSERT_EQ("root/item3", unusedValues[0]);
+    ASSERT_EQ("root/item1/testInt2", unusedValues[1]);
 }
 
 }  // namespace cppParserTesting
