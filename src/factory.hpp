@@ -72,6 +72,9 @@ class Factory {
     /* provide a virtual IsSameFactory function */
     inline bool operator==(const Factory& otherFactory) const { return SameFactory(otherFactory); }
 
+    /** Promote tracking used/unused values to the factory **/
+    virtual std::vector<std::string> GetUnusedValues() const = 0;
+
     /* produce a shared pointer for the specified interface and type */
     template <typename Interface>
     std::shared_ptr<Interface> Get(const ArgumentIdentifier<Interface>& identifier) const {
@@ -85,6 +88,9 @@ class Factory {
         // check to see if the child factory has already been used to create an instance of the interface
         if (auto instanceTrackerPtr = instanceTracker.lock()) {
             if (auto instance = instanceTrackerPtr->GetInstance<Interface>(childFactory)) {
+                // Mark that child factory as using all children because this factory won't be used
+                childFactory->MarkAllUsed();
+
                 return instance;
             }
         }
@@ -156,6 +162,10 @@ class Factory {
         auto stringValue = Get(ArgumentIdentifier<std::string>{.inputName = identifier.inputName, .optional = identifier.optional});
         return EnumWrapper<ENUM>(stringValue);
     }
+
+   protected:
+    /** Mark the values as used*/
+    virtual void MarkAllUsed() const = 0;
 };
 }  // namespace cppParser
 

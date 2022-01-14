@@ -29,6 +29,8 @@ class MockFactory : public cppParser::Factory {
     MOCK_METHOD(bool, Contains, (const std::string& name), (override, const));
     MOCK_METHOD(std::unordered_set<std::string>, GetKeys, (), (const, override));
     MOCK_METHOD(bool, SameFactory, (const Factory& otherFactory), (const, override));
+    MOCK_METHOD(std::vector<std::string>, GetUnusedValues, (), (const, override));
+    MOCK_METHOD(void, MarkAllUsed, (), (const, override));
 };
 }  // namespace cppParserTesting
 

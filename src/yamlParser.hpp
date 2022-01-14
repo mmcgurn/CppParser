@@ -37,7 +37,7 @@ class YamlParser : public Factory {
     /**
      * Marks all of the keys used.
      */
-    inline void MarkAllUsed() const {
+    void MarkAllUsed() const override {
         for (auto& pairs : nodeUsages) {
             pairs.second++;
         }
@@ -152,7 +152,7 @@ class YamlParser : public Factory {
     std::unordered_set<std::string> GetKeys() const override;
 
     /** get unused values **/
-    std::vector<std::string> GetUnusedValues() const;
+    std::vector<std::string> GetUnusedValues() const override;
 
     /** print a copy of the yaml input as updated **/
     void Print(std::ostream&) const;
