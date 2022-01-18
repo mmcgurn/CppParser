@@ -75,16 +75,15 @@ class Factory {
     /** Promote tracking used/unused values to the factory **/
     virtual std::vector<std::string> GetUnusedValues() const = 0;
 
-    /* produce a shared pointer for the specified interface and type */
+   private:
+    /**
+     * Private function to create an instance from factory
+     * @tparam Interface
+     * @param identifier
+     * @return
+     */
     template <typename Interface>
-    std::shared_ptr<Interface> Get(const ArgumentIdentifier<Interface>& identifier) const {
-        if (identifier.optional && !Contains(identifier.inputName)) {
-            return {};
-        }
-
-        // build the child factory
-        auto childFactory = GetFactory(identifier.inputName);
-
+    std::shared_ptr<Interface> CreateInstanceFromFactory(const std::shared_ptr<Factory>& childFactory) const {
         // check to see if the child factory has already been used to create an instance of the interface
         if (auto instanceTrackerPtr = instanceTracker.lock()) {
             if (auto instance = instanceTrackerPtr->GetInstance<Interface>(childFactory)) {
@@ -106,6 +105,20 @@ class Factory {
         return newInstance;
     }
 
+   public:
+    /* produce a shared pointer for the specified interface and type */
+    template <typename Interface>
+    std::shared_ptr<Interface> Get(const ArgumentIdentifier<Interface>& identifier) const {
+        if (identifier.optional && !Contains(identifier.inputName)) {
+            return {};
+        }
+
+        // build the child factory
+        auto childFactory = GetFactory(identifier.inputName);
+
+        return CreateInstanceFromFactory<Interface>(childFactory);
+    }
+
     template <typename Interface>
     std::vector<std::shared_ptr<Interface>> Get(const ArgumentIdentifier<std::vector<Interface>>& identifier) const {
         if (identifier.optional && !Contains(identifier.inputName)) {
@@ -117,7 +130,7 @@ class Factory {
         // Build and resolve the list
         std::vector<std::shared_ptr<Interface>> results;
         for (auto childFactory : childFactories) {
-            results.push_back(ResolveAndCreate<Interface>(childFactory));
+            results.push_back(CreateInstanceFromFactory<Interface>(childFactory));
         }
 
         return results;
@@ -137,7 +150,7 @@ class Factory {
         for (auto childName : childrenNames) {
             auto subChildFactory = childFactory->GetFactory(childName);
 
-            results[childName] = (ResolveAndCreate<Interface>(subChildFactory));
+            results[childName] = (CreateInstanceFromFactory<Interface>(subChildFactory));
         }
 
         return results;

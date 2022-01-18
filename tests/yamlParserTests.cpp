@@ -896,6 +896,15 @@ TEST(YamlParserTests, ShouldReuseInstances) {
     yaml << "     subItem1: 1.0" << std::endl;
     yaml << "   item6: *anchor1" << std::endl;
     yaml << " item7: *anchor2" << std::endl;
+    yaml << " itemList:" << std::endl;
+    yaml << "   - #item 8" << std::endl;
+    yaml << "     *anchor2" << std::endl;
+    yaml << "   - #item 9" << std::endl;
+    yaml << "     subItem1: 1.0" << std::endl;
+    yaml << " itemMap:" << std::endl;
+    yaml << "   item10: " << std::endl;
+    yaml << "     subItem1: 1.0" << std::endl;
+    yaml << "   item11: *anchor1" << std::endl;
 
     auto yamlParser = std::make_shared<YamlParser>(yaml.str());
 
@@ -909,6 +918,14 @@ TEST(YamlParserTests, ShouldReuseInstances) {
     auto instance6 = subFactory1->GetByName<YamlMockClass1>("item6");
     auto instance7 = yamlParser->GetByName<YamlMockClass1>("item7");
 
+    auto itemList = yamlParser->GetByName<std::vector<YamlMockClass1>>("itemList");
+    auto instance8 = itemList[0];
+    auto instance9 = itemList[1];
+
+    auto itemMap = yamlParser->GetByName<std::map<std::string, YamlMockClass1>>("itemMap");
+    auto instance10 = itemMap["item10"];
+    auto instance11 = itemMap["item11"];
+
     // assert
     ASSERT_TRUE(instance1);
     ASSERT_FALSE(instance1 == instance2);
@@ -917,6 +934,10 @@ TEST(YamlParserTests, ShouldReuseInstances) {
     ASSERT_FALSE(instance1 == instance5);
     ASSERT_FALSE(instance1 == instance6);
     ASSERT_FALSE(instance1 == instance7);
+    ASSERT_FALSE(instance1 == instance8);
+    ASSERT_FALSE(instance1 == instance9);
+    ASSERT_FALSE(instance1 == instance10);
+    ASSERT_FALSE(instance1 == instance11);
 
     ASSERT_FALSE(instance2 == instance1);
     ASSERT_TRUE(instance2);
@@ -925,6 +946,10 @@ TEST(YamlParserTests, ShouldReuseInstances) {
     ASSERT_FALSE(instance2 == instance5);
     ASSERT_FALSE(instance2 == instance6);
     ASSERT_FALSE(instance2 == instance7);
+    ASSERT_FALSE(instance2 == instance8);
+    ASSERT_FALSE(instance2 == instance9);
+    ASSERT_FALSE(instance2 == instance10);
+    ASSERT_FALSE(instance2 == instance11);
 
     ASSERT_FALSE(instance3 == instance1);
     ASSERT_FALSE(instance3 == instance2);
@@ -933,6 +958,10 @@ TEST(YamlParserTests, ShouldReuseInstances) {
     ASSERT_FALSE(instance3 == instance5);
     ASSERT_TRUE(instance3 == instance6);
     ASSERT_FALSE(instance3 == instance7);
+    ASSERT_FALSE(instance3 == instance8);
+    ASSERT_FALSE(instance3 == instance9);
+    ASSERT_FALSE(instance3 == instance10);
+    ASSERT_TRUE(instance3 == instance11);
 
     ASSERT_FALSE(instance4 == instance1);
     ASSERT_FALSE(instance4 == instance2);
@@ -941,6 +970,10 @@ TEST(YamlParserTests, ShouldReuseInstances) {
     ASSERT_FALSE(instance4 == instance5);
     ASSERT_TRUE(instance4 == instance6);
     ASSERT_FALSE(instance4 == instance7);
+    ASSERT_FALSE(instance4 == instance8);
+    ASSERT_FALSE(instance4 == instance9);
+    ASSERT_FALSE(instance4 == instance10);
+    ASSERT_TRUE(instance4 == instance11);
 
     ASSERT_FALSE(instance5 == instance1);
     ASSERT_FALSE(instance5 == instance2);
@@ -949,6 +982,10 @@ TEST(YamlParserTests, ShouldReuseInstances) {
     ASSERT_TRUE(instance5);
     ASSERT_FALSE(instance5 == instance6);
     ASSERT_TRUE(instance5 == instance7);
+    ASSERT_TRUE(instance5 == instance8);
+    ASSERT_FALSE(instance5 == instance9);
+    ASSERT_FALSE(instance5 == instance10);
+    ASSERT_FALSE(instance5 == instance11);
 
     ASSERT_FALSE(instance6 == instance1);
     ASSERT_FALSE(instance6 == instance2);
@@ -957,6 +994,10 @@ TEST(YamlParserTests, ShouldReuseInstances) {
     ASSERT_FALSE(instance6 == instance5);
     ASSERT_TRUE(instance6);
     ASSERT_FALSE(instance6 == instance7);
+    ASSERT_FALSE(instance6 == instance8);
+    ASSERT_FALSE(instance6 == instance9);
+    ASSERT_FALSE(instance6 == instance10);
+    ASSERT_TRUE(instance6 == instance11);
 
     ASSERT_FALSE(instance7 == instance1);
     ASSERT_FALSE(instance7 == instance2);
@@ -965,6 +1006,59 @@ TEST(YamlParserTests, ShouldReuseInstances) {
     ASSERT_TRUE(instance7 == instance5);
     ASSERT_FALSE(instance7 == instance6);
     ASSERT_TRUE(instance7);
+    ASSERT_TRUE(instance7 == instance8);
+    ASSERT_FALSE(instance7 == instance9);
+    ASSERT_FALSE(instance7 == instance10);
+    ASSERT_FALSE(instance7 == instance11);
+
+    ASSERT_FALSE(instance8 == instance1);
+    ASSERT_FALSE(instance8 == instance2);
+    ASSERT_FALSE(instance8 == instance3);
+    ASSERT_FALSE(instance8 == instance4);
+    ASSERT_TRUE(instance8 == instance5);
+    ASSERT_FALSE(instance8 == instance6);
+    ASSERT_TRUE(instance8 == instance7);
+    ASSERT_TRUE(instance8 == instance8);
+    ASSERT_TRUE(instance8);
+    ASSERT_FALSE(instance8 == instance9);
+    ASSERT_FALSE(instance8 == instance10);
+    ASSERT_FALSE(instance8 == instance11);
+
+    ASSERT_FALSE(instance9 == instance1);
+    ASSERT_FALSE(instance9 == instance2);
+    ASSERT_FALSE(instance9 == instance3);
+    ASSERT_FALSE(instance9 == instance4);
+    ASSERT_FALSE(instance9 == instance5);
+    ASSERT_FALSE(instance9 == instance6);
+    ASSERT_FALSE(instance9 == instance5);
+    ASSERT_FALSE(instance9 == instance8);
+    ASSERT_TRUE(instance9);
+    ASSERT_FALSE(instance9 == instance10);
+    ASSERT_FALSE(instance9 == instance11);
+
+    ASSERT_FALSE(instance10 == instance1);
+    ASSERT_FALSE(instance10 == instance2);
+    ASSERT_FALSE(instance10 == instance3);
+    ASSERT_FALSE(instance10 == instance4);
+    ASSERT_FALSE(instance10 == instance5);
+    ASSERT_FALSE(instance10 == instance6);
+    ASSERT_FALSE(instance10 == instance5);
+    ASSERT_FALSE(instance10 == instance8);
+    ASSERT_FALSE(instance10 == instance9);
+    ASSERT_TRUE(instance10);
+    ASSERT_FALSE(instance10 == instance11);
+
+    ASSERT_FALSE(instance11 == instance1);
+    ASSERT_FALSE(instance11 == instance2);
+    ASSERT_TRUE(instance11 == instance3);
+    ASSERT_TRUE(instance11 == instance4);
+    ASSERT_FALSE(instance11 == instance5);
+    ASSERT_TRUE(instance11 == instance6);
+    ASSERT_FALSE(instance11 == instance7);
+    ASSERT_FALSE(instance11 == instance8);
+    ASSERT_FALSE(instance11 == instance9);
+    ASSERT_FALSE(instance11 == instance10);
+    ASSERT_TRUE(instance11);
 }
 
 class YamlMockClass2 {
