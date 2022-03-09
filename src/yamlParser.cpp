@@ -66,7 +66,7 @@ std::shared_ptr<cppParser::Factory> cppParser::YamlParser::GetFactory(const std:
 }
 
 std::vector<std::shared_ptr<cppParser::Factory>> cppParser::YamlParser::GetFactorySequence(const std::string& name) const {
-    auto parameter = yamlConfiguration[name];
+    auto parameter = name.empty() ? yamlConfiguration : yamlConfiguration[name];
     if (!parameter) {
         throw std::invalid_argument("unable to find list " + name + " in " + nodePath);
     }

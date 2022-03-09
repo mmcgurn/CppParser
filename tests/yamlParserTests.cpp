@@ -834,6 +834,31 @@ TEST(YamlParserTests, ShouldReturnSelfFactoryWhenInputNameIsEmpty) {
     ASSERT_EQ("", selfFactory->GetClassType());
 }
 
+TEST(YamlParserTests, ShouldReturnSelfFactoryListWhenInputNameIsEmpty) {
+    // arrange
+    std::stringstream yaml;
+    yaml << "---" << std::endl;
+    yaml << " item: !classType123" << std::endl;
+    yaml << "   - subItem1: 1.0" << std::endl;
+    yaml << "   - !blueClassType" << std::endl;
+    yaml << "     subItem2: 2.0 " << std::endl;
+
+    std::string emptyString = {};
+
+    auto yamlParser = std::make_shared<YamlParser>(yaml.str());
+
+    // act
+    auto factory1 = yamlParser->GetFactory("item");
+    auto selfFactoryList = factory1->GetFactorySequence("");
+
+    // assert
+    ASSERT_EQ(2, selfFactoryList.size());
+    ASSERT_EQ(1.0, selfFactoryList[0]->Get(ArgumentIdentifier<double>{.inputName = "subItem1"}));
+    ASSERT_EQ("", selfFactoryList[0]->GetClassType());
+    ASSERT_EQ(2.0, selfFactoryList[1]->Get(ArgumentIdentifier<double>{.inputName = "subItem2"}));
+    ASSERT_EQ("blueClassType", selfFactoryList[1]->GetClassType());
+}
+
 TEST(YamlParserTests, ShouldCompareFactories) {
     // arrange
     std::stringstream yaml;
