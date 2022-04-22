@@ -183,6 +183,26 @@ TEST(FactoryTests, ShouldReturnDefaultEnumValueWhenOptional) {
     ASSERT_EQ(result, TestEnum::DEFAULT);
 }
 
+TEST(FactoryTests, ShouldReturnEnumFromStringList) {
+    // arrange
+
+    cppParser::Registrar<FactoryMockClass1>::Register<FactoryMockClass1>(true, "FactoryMockClass1", "this is a simple mock class");
+    auto mockFactory = std::make_shared<MockFactory>();
+    EXPECT_CALL(*mockFactory, Get(ArgumentIdentifier<std::vector<std::string>>{.inputName = "input123"}))
+        .Times(::testing::Exactly(1))
+        .WillOnce(::testing::Return(std::vector<std::string>{"component", "component", "vector"}));
+
+    // act
+    auto argument = ArgumentIdentifier<std::vector<EnumWrapper<TestEnum>>>{.inputName = "input123", .optional = false};
+    std::vector<TestEnum> result = std::dynamic_pointer_cast<Factory>(mockFactory)->Get(argument);
+
+    // assert
+    ASSERT_EQ(result.size(), 3);
+    ASSERT_EQ(result[0], TestEnum::COMPONENT);
+    ASSERT_EQ(result[1], TestEnum::COMPONENT);
+    ASSERT_EQ(result[2], TestEnum::VECTOR);
+}
+
 TEST(FactoryTests, ShouldGetMapOfSharedPointers) {
     // arrange
     const std::string defaultClassType = "FactoryMockClass1";
