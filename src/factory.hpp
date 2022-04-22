@@ -170,10 +170,32 @@ class Factory {
         }
     }
 
+    /**
+     * Helper function to convert from stings to an enum using an enum wrapper
+     * @tparam ENUM
+     * @param identifier
+     * @return
+     */
     template <typename ENUM>
     ENUM Get(const ArgumentIdentifier<EnumWrapper<ENUM>>& identifier) const {
         auto stringValue = Get(ArgumentIdentifier<std::string>{.inputName = identifier.inputName, .optional = identifier.optional});
         return EnumWrapper<ENUM>(stringValue);
+    }
+
+    /**
+     * Helper function to convert from list of stings to a list of enums using an enum wrapper
+     * @tparam ENUM
+     * @param identifier
+     * @return
+     */
+    template <typename ENUM>
+    std::vector<ENUM> Get(const ArgumentIdentifier<std::vector<EnumWrapper<ENUM>>>& identifier) const {
+        auto stringVector = Get(ArgumentIdentifier<std::vector<std::string>>{.inputName = identifier.inputName, .optional = identifier.optional});
+        std::vector<ENUM> enumVector;
+        for (const auto& enumString : stringVector) {
+            enumVector.push_back(EnumWrapper<ENUM>(enumString));
+        }
+        return enumVector;
     }
 
    protected:
