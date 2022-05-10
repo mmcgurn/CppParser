@@ -17,17 +17,10 @@ class Demangler {
 
    private:
     template <typename Test, template <typename...> class Ref>
-    struct IsSpecialization : std::false_type {
-        static std::string GetTypeName() { return Demangle(typeid(Test).name()); }
-    };
+    struct IsSpecialization : std::false_type {};
 
     template <template <typename...> class Ref, typename... Args>
-    struct IsSpecialization<Ref<Args...>, Ref> : std::true_type {
-        static std::string GetTypeName() {
-            std::vector<std::string> names = {GetArgName<Args>()...};
-            return names.front();
-        }
-    };
+    struct IsSpecialization<Ref<Args...>, Ref> : std::true_type {};
 
     template <class T>
     inline static std::string GetArgName() {
@@ -38,7 +31,7 @@ class Demangler {
             return "";
         }
         if (IsSpecialization<T, cppParser::EnumWrapper>::value) {
-            return IsSpecialization<T, cppParser::EnumWrapper>::GetTypeName();
+            return TypeInfo<T, cppParser::EnumWrapper>::GetTypeName();
         }
         return Demangle(typeid(T).name());
     }
