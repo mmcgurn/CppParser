@@ -26,6 +26,9 @@ class Demangler {
         if (IsSpecialization<T, std::allocator>::value) {
             return "";
         }
+        if (IsSpecialization<T, std::less>::value) {
+            return "";
+        }
         return Demangle(typeid(T).name());
     }
 
