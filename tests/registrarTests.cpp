@@ -29,7 +29,7 @@ class MockClass1 : public MockInterface {
 TEST(RegistrarTests, ShouldRegisterClassAndRecordInLog) {
     // arrange
     auto mockListing = std::make_shared<MockListing>();
-    EXPECT_CALL(*mockListing, RecordListing(Listing::ClassEntry{.interface = typeid(MockInterface).name(), .className = "mockClass1", .description = "this is a simple mock class"}))
+    EXPECT_CALL(*mockListing, RecordListing(Listing::ClassEntry{.interface = Demangler::Demangle<MockInterface>(), .className = "mockClass1", .description = "this is a simple mock class"}))
         .Times(::testing::Exactly(1));
 
     Listing::ReplaceListing(mockListing);
@@ -53,14 +53,14 @@ class MockClass2 : public MockInterface {
 TEST(RegistrarTests, ShouldRegisterClassWithArgumentIdentifiersAndRecordInLog) {
     // arrange
     auto mockListing = std::make_shared<MockListing>();
-    EXPECT_CALL(
-        *mockListing,
-        RecordListing(Listing::ClassEntry{.interface = typeid(MockInterface).name(),
-                                          .className = "MockClass2",
-                                          .description = "this is a simple mock class",
-                                          .arguments = {Listing::ArgumentEntry{.name = "dog", .interface = typeid(std::string).name(), .description = "this is a string"},
-                                                        Listing::ArgumentEntry{.name = "cat", .interface = typeid(int).name(), .description = "this is a int"},
-                                                        Listing::ArgumentEntry{.name = "bird", .interface = typeid(MockInterface).name(), .description = "this is a shared pointer to an interface"}}}))
+    EXPECT_CALL(*mockListing,
+                RecordListing(Listing::ClassEntry{
+                    .interface = Demangler::Demangle<MockInterface>(),
+                    .className = "MockClass2",
+                    .description = "this is a simple mock class",
+                    .arguments = {Listing::ArgumentEntry{.name = "dog", .interface = Demangler::Demangle<std::string>(), .description = "this is a string"},
+                                  Listing::ArgumentEntry{.name = "cat", .interface = Demangler::Demangle<int>(), .description = "this is a int"},
+                                  Listing::ArgumentEntry{.name = "bird", .interface = Demangler::Demangle<MockInterface>(), .description = "this is a shared pointer to an interface"}}}))
         .Times(::testing::Exactly(1));
 
     Listing::ReplaceListing(mockListing);
@@ -84,14 +84,15 @@ TEST(RegistrarTests, ShouldRegisterClassWithArgumentIdentifiersAndRecordInLog) {
 TEST(RegistrarTests, ShouldRegisterClassWithArgumentIdentifiersAndOptAndRecordInLog) {
     // arrange
     auto mockListing = std::make_shared<MockListing>();
-    EXPECT_CALL(*mockListing,
-                RecordListing(Listing::ClassEntry{
-                    .interface = typeid(MockInterface).name(),
-                    .className = "MockClass2a",
-                    .description = "this is a simple mock class",
-                    .arguments = {Listing::ArgumentEntry{.name = "dog", .interface = typeid(std::string).name(), .description = "this is a string", .optional = true},
-                                  Listing::ArgumentEntry{.name = "cat", .interface = typeid(int).name(), .description = "this is a int", .optional = true},
-                                  Listing::ArgumentEntry{.name = "bird", .interface = typeid(MockInterface).name(), .description = "this is a shared pointer to an interface", .optional = true}}}))
+    EXPECT_CALL(
+        *mockListing,
+        RecordListing(Listing::ClassEntry{
+            .interface = Demangler::Demangle<MockInterface>(),
+            .className = "MockClass2a",
+            .description = "this is a simple mock class",
+            .arguments = {Listing::ArgumentEntry{.name = "dog", .interface = Demangler::Demangle<std::string>(), .description = "this is a string", .optional = true},
+                          Listing::ArgumentEntry{.name = "cat", .interface = Demangler::Demangle<int>(), .description = "this is a int", .optional = true},
+                          Listing::ArgumentEntry{.name = "bird", .interface = Demangler::Demangle<MockInterface>(), .description = "this is a shared pointer to an interface", .optional = true}}}))
         .Times(::testing::Exactly(1));
 
     Listing::ReplaceListing(mockListing);
@@ -126,15 +127,15 @@ class MockClass4 : public MockInterface4 {
 TEST(RegistrarTests, ShouldRegisterDefaultClassWithArgumentIdentifiersAndRecordInLog) {
     // arrange
     auto mockListing = std::make_shared<MockListing>();
-    EXPECT_CALL(
-        *mockListing,
-        RecordListing(Listing::ClassEntry{.interface = typeid(MockInterface4).name(),
-                                          .className = "MockClass4",
-                                          .description = "this is a simple mock class",
-                                          .arguments = {Listing::ArgumentEntry{.name = "dog", .interface = typeid(std::string).name(), .description = "this is a string"},
-                                                        Listing::ArgumentEntry{.name = "cat", .interface = typeid(int).name(), .description = "this is a int"},
-                                                        Listing::ArgumentEntry{.name = "bird", .interface = typeid(MockInterface4).name(), .description = "this is a shared pointer to an interface"}},
-                                          .defaultConstructor = true}))
+    EXPECT_CALL(*mockListing,
+                RecordListing(Listing::ClassEntry{
+                    .interface = Demangler::Demangle<MockInterface4>(),
+                    .className = "MockClass4",
+                    .description = "this is a simple mock class",
+                    .arguments = {Listing::ArgumentEntry{.name = "dog", .interface = Demangler::Demangle<std::string>(), .description = "this is a string"},
+                                  Listing::ArgumentEntry{.name = "cat", .interface = Demangler::Demangle<int>(), .description = "this is a int"},
+                                  Listing::ArgumentEntry{.name = "bird", .interface = Demangler::Demangle<MockInterface4>(), .description = "this is a shared pointer to an interface"}},
+                    .defaultConstructor = true}))
         .Times(::testing::Exactly(1));
 
     Listing::ReplaceListing(mockListing);
@@ -279,7 +280,7 @@ static std::shared_ptr<MockClass6> MakeMockClass6Function(std::shared_ptr<Factor
 TEST(RegistrarTests, ShouldRegisterFunctionForClassAndRecordInLog) {
     // arrange
     auto mockListing = std::make_shared<MockListing>();
-    EXPECT_CALL(*mockListing, RecordListing(Listing::ClassEntry{.interface = typeid(MockInterface).name(), .className = "mockClass6", .description = "this is a simple mock class"}))
+    EXPECT_CALL(*mockListing, RecordListing(Listing::ClassEntry{.interface = Demangler::Demangle<MockInterface>(), .className = "mockClass6", .description = "this is a simple mock class"}))
         .Times(::testing::Exactly(1));
 
     Listing::ReplaceListing(mockListing);
