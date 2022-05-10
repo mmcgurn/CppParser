@@ -21,7 +21,7 @@ class Demangler {
     template <template <typename...> class Ref, typename... Args>
     struct IsSpecialization<Ref<Args...>, Ref> : std::true_type {
         static std::string GetTypeName() {
-            std::vector<std::string> names = {Demangle(typeid(Args).name()...)};
+            std::vector<std::string> names = {Demangle(typeid(Args).name())...};
             return std::accumulate(names.begin() + 1, names.end(), names.front(), [](std::string x, std::string y) { return x + "," + y; });
         }
     };
