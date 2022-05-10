@@ -18,7 +18,7 @@ class Demangler {
    private:
     template <typename Test, template <typename...> class Ref>
     struct IsSpecialization : std::false_type {
-        static std::string GetTypeName() { Demangle(typeid(Test).name()); }
+        static std::string GetTypeName() { return Demangle(typeid(Test).name()); }
     };
 
     template <template <typename...> class Ref, typename... Args>
