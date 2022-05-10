@@ -8,6 +8,7 @@
 #include <string>
 #include <typeinfo>
 #include <vector>
+#include "enumWrapper.hpp"
 
 namespace cppParser {
 class Demangler {
@@ -60,6 +61,10 @@ class Demangler {
 
         if constexpr (IsSpecialization<T, std::map>::value) {
             return TypeInfo<T, std::map>::GetTypeName() + " map";
+        }
+
+        if constexpr (IsSpecialization<T, cppParser::EnumWrapper>::value) {
+            return TypeInfo<T, cppParser::EnumWrapper>::GetTypeName() + " enum";
         }
 
         return Demangle(typeid(T).name());
