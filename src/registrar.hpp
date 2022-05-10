@@ -143,7 +143,7 @@ class Registrar {
                 if (GetDefaultClassName().empty()) {
                     GetDefaultClassName() = className;
                 } else {
-                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle(typeid(Interface).name()) + " is already set as " + GetDefaultClassName());
+                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle<Interface>() + " is already set as " + GetDefaultClassName());
                 }
             }
         }
@@ -165,7 +165,7 @@ class Registrar {
                 if (GetDefaultClassName().empty()) {
                     GetDefaultClassName() = className;
                 } else {
-                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle(typeid(Interface).name()) + " is already set as " + GetDefaultClassName());
+                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle<Interface>() + " is already set as " + GetDefaultClassName());
                 }
             }
         }
@@ -187,7 +187,7 @@ class Registrar {
                 if (GetDefaultClassName().empty()) {
                     GetDefaultClassName() = className;
                 } else {
-                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle(typeid(Interface).name()) + " is already set as " + GetDefaultClassName());
+                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle<Interface>() + " is already set as " + GetDefaultClassName());
                 }
             }
         }
@@ -214,7 +214,7 @@ class Registrar {
                 if (GetDefaultClassName().empty()) {
                     GetDefaultClassName() = className;
                 } else {
-                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle(typeid(Interface).name()) + " is already set as " + GetDefaultClassName());
+                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle<Interface>() + " is already set as " + GetDefaultClassName());
                 }
             }
 
@@ -250,7 +250,7 @@ std::shared_ptr<Interface> ResolveAndCreate(std::shared_ptr<Factory> factory) {
         std::string defaultClassName = Registrar<Interface>::GetDefaultClassName();
         std::function<std::shared_ptr<Interface>(std::shared_ptr<Factory>)> createMethod = Registrar<Interface>::GetCreateMethod(defaultClassName);
         if (!createMethod) {
-            throw std::invalid_argument("no default creator specified for interface " + Demangler::Demangle(typeid(Interface).name()));
+            throw std::invalid_argument("no default creator specified for interface " + Demangler::Demangle<Interface>());
         }
 
         return createMethod(factory);
