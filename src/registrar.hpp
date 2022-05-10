@@ -134,7 +134,8 @@ class Registrar {
         std::map<std::string, TCreateMethod>& methods = GetConstructionMethods();
         if (auto it = methods.find(className); it == methods.end()) {
             // Record the entry
-            Listing::Get().RecordListing(Listing::ClassEntry{.interface = typeid(Interface).name(), .className = className, .description = description, .defaultConstructor = defaultConstructor});
+            Listing::Get().RecordListing(
+                Listing::ClassEntry{.interface = Demangler::Demangle<Interface>(), .className = className, .description = description, .defaultConstructor = defaultConstructor});
 
             // create method
             methods[className] = method;
@@ -143,7 +144,7 @@ class Registrar {
                 if (GetDefaultClassName().empty()) {
                     GetDefaultClassName() = className;
                 } else {
-                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle(typeid(Interface).name()) + " is already set as " + GetDefaultClassName());
+                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle<Interface>() + " is already set as " + GetDefaultClassName());
                 }
             }
         }
@@ -156,7 +157,8 @@ class Registrar {
         std::map<std::string, TCreateMethod>& methods = GetConstructionMethods();
         if (auto it = methods.find(className); it == methods.end()) {
             // Record the entry
-            Listing::Get().RecordListing(Listing::ClassEntry{.interface = typeid(Interface).name(), .className = className, .description = description, .defaultConstructor = defaultConstructor});
+            Listing::Get().RecordListing(
+                Listing::ClassEntry{.interface = Demangler::Demangle<Interface>(), .className = className, .description = description, .defaultConstructor = defaultConstructor});
 
             // create method
             methods[className] = [](std::shared_ptr<Factory> factory) { return std::make_shared<Class>(factory); };
@@ -165,7 +167,7 @@ class Registrar {
                 if (GetDefaultClassName().empty()) {
                     GetDefaultClassName() = className;
                 } else {
-                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle(typeid(Interface).name()) + " is already set as " + GetDefaultClassName());
+                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle<Interface>() + " is already set as " + GetDefaultClassName());
                 }
             }
         }
@@ -178,7 +180,8 @@ class Registrar {
         std::map<std::string, TCreateMethod>& methods = GetConstructionMethods();
         if (auto it = methods.find(className); it == methods.end()) {
             // Record the entry
-            Listing::Get().RecordListing(Listing::ClassEntry{.interface = typeid(Interface).name(), .className = className, .description = description, .defaultConstructor = defaultConstructor});
+            Listing::Get().RecordListing(
+                Listing::ClassEntry{.interface = Demangler::Demangle<Interface>(), .className = className, .description = description, .defaultConstructor = defaultConstructor});
 
             // create method
             methods[className] = [](const std::shared_ptr<Factory>& factory) { return std::make_shared<Class>(); };
@@ -187,7 +190,7 @@ class Registrar {
                 if (GetDefaultClassName().empty()) {
                     GetDefaultClassName() = className;
                 } else {
-                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle(typeid(Interface).name()) + " is already set as " + GetDefaultClassName());
+                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle<Interface>() + " is already set as " + GetDefaultClassName());
                 }
             }
         }
@@ -201,10 +204,10 @@ class Registrar {
         if (auto it = methods.find(className); it == methods.end()) {
             // Record the entry
             Listing::Get().RecordListing(Listing::ClassEntry{
-                .interface = typeid(Interface).name(),
+                .interface = Demangler::Demangle<Interface>(),
                 .className = className,
                 .description = description,
-                .arguments = std::vector({Listing::ArgumentEntry{.name = args.inputName, .interface = typeid(Args).name(), .description = args.description, .optional = args.optional}...}),
+                .arguments = std::vector({Listing::ArgumentEntry{.name = args.inputName, .interface = Demangler::Demangle<Args>(), .description = args.description, .optional = args.optional}...}),
                 .defaultConstructor = defaultConstructor});
 
             // create method
@@ -214,7 +217,7 @@ class Registrar {
                 if (GetDefaultClassName().empty()) {
                     GetDefaultClassName() = className;
                 } else {
-                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle(typeid(Interface).name()) + " is already set as " + GetDefaultClassName());
+                    throw std::invalid_argument("the default parameter for " + Demangler::Demangle<Interface>() + " is already set as " + GetDefaultClassName());
                 }
             }
 
@@ -250,7 +253,7 @@ std::shared_ptr<Interface> ResolveAndCreate(std::shared_ptr<Factory> factory) {
         std::string defaultClassName = Registrar<Interface>::GetDefaultClassName();
         std::function<std::shared_ptr<Interface>(std::shared_ptr<Factory>)> createMethod = Registrar<Interface>::GetCreateMethod(defaultClassName);
         if (!createMethod) {
-            throw std::invalid_argument("no default creator specified for interface " + Demangler::Demangle(typeid(Interface).name()));
+            throw std::invalid_argument("no default creator specified for interface " + Demangler::Demangle<Interface>());
         }
 
         return createMethod(factory);

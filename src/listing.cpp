@@ -13,7 +13,7 @@ cppParser::Listing &cppParser::Listing::Get() {
 
 std::ostream &cppParser::operator<<(std::ostream &os, const cppParser::Listing &listing) {
     for (const auto &interface : listing.entries) {
-        os << "# " << Demangler::Demangle(interface.first) << std::endl;
+        os << "# " << interface.first << std::endl;
         for (const auto &classEntry : interface.second) {
             os << classEntry;
         }
@@ -29,7 +29,7 @@ std::ostream &cppParser::operator<<(std::ostream &os, const cppParser::Listing::
     }
     os << argumentEntry.name << (argumentEntry.optional ? "" : " (req) ") << std::endl;
     os << ": "
-       << "(" << Demangler::Demangle(argumentEntry.interface) << ") " << argumentEntry.description;
+       << "(" << argumentEntry.interface << ") " << argumentEntry.description;
     os << std::endl << std::endl;
     return os;
 }
