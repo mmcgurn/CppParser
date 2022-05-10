@@ -31,7 +31,7 @@ class Demangler {
             return "";
         }
         if (IsSpecialization<T, cppParser::EnumWrapper>::value) {
-            return TypeInfo<T, cppParser::EnumWrapper>::GetTypeName();
+            return TypeInfo<T, cppParser::EnumWrapper>::GetTypeName() + " enum";
         }
         return Demangle(typeid(T).name());
     }
