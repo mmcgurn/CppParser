@@ -4,7 +4,9 @@
 #include <filesystem>
 #include <map>
 #include <numeric>
+#include <regex>
 #include <string>
+#include <typeinfo>
 #include <vector>
 
 namespace cppParser {
@@ -14,15 +16,35 @@ class Demangler {
 
    private:
     template <typename Test, template <typename...> class Ref>
-    struct IsSpecialization : std::false_type {
+    struct IsSpecialization : std::false_type {};
+
+    template <template <typename...> class Ref, typename... Args>
+    struct IsSpecialization<Ref<Args...>, Ref> : std::true_type {};
+
+    template <class T>
+    inline static std::string GetArgName() {
+        if (IsSpecialization<T, std::allocator>::value) {
+            return "";
+        }
+        return Demangle(typeid(T).name());
+    }
+
+    template <typename Test, template <typename...> class Ref>
+    struct TypeInfo : std::false_type {
         static std::string GetTypeName() { return ""; }
     };
 
     template <template <typename...> class Ref, typename... Args>
-    struct IsSpecialization<Ref<Args...>, Ref> : std::true_type {
+    struct TypeInfo<Ref<Args...>, Ref> {
         static std::string GetTypeName() {
-            std::vector<std::string> names = {Demangle(typeid(Args).name())...};
-            return std::accumulate(names.begin() + 1, names.end(), names.front(), [](std::string x, std::string y) { return x + "," + y; });
+            std::vector<std::string> names = {GetArgName<Args>()...};
+            // remove default allocator is listed
+            return std::accumulate(names.begin() + 1, names.end(), names.front(), [](std::string x, std::string y) {
+                if (y.empty()) {
+                    return x;
+                }
+                return x + "," + y;
+            });
         }
     };
 
@@ -30,11 +52,11 @@ class Demangler {
     template <class T>
     inline static std::string Demangle() {
         if constexpr (IsSpecialization<T, std::vector>::value) {
-            return IsSpecialization<T, std::vector>::GetTypeName() + " list";
+            return TypeInfo<T, std::vector>::GetTypeName() + " list";
         }
 
         if constexpr (IsSpecialization<T, std::map>::value) {
-            return IsSpecialization<T, std::vector>::GetTypeName() + " map";
+            return TypeInfo<T, std::map>::GetTypeName() + " map";
         }
 
         return Demangle(typeid(T).name());
