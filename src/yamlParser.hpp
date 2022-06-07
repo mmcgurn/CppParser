@@ -15,7 +15,6 @@ class YamlParser : public Factory {
     const YAML::Node yamlConfiguration;
     mutable std::map<std::string, int> nodeUsages;
     mutable std::map<std::string, std::shared_ptr<YamlParser>> childFactories;
-    const std::function<std::filesystem::path(std::string)> locateFileFunction;
 
     // The root YamlParser should store a shared ptr to a     mutable std::weak_ptr<InstanceTracker> instanceTracker;
     std::shared_ptr<InstanceTracker> rootInstanceTracker;
@@ -26,8 +25,7 @@ class YamlParser : public Factory {
      * @param nodePath
      * @param type
      */
-    YamlParser(const YAML::Node& yamlConfiguration, std::string nodePath, std::string type, std::function<std::filesystem::path(std::string)> = {},
-               std::weak_ptr<InstanceTracker> instanceTracker = {});
+    YamlParser(const YAML::Node& yamlConfiguration, std::string nodePath, std::string type, std::weak_ptr<InstanceTracker> instanceTracker = {});
     inline void MarkUsage(const std::string& key) const {
         if (!key.empty()) {
             nodeUsages[key]++;
@@ -79,20 +77,20 @@ class YamlParser : public Factory {
     static void ReplaceValue(YAML::Node& yamlConfiguration, const std::string& key, const std::string& value);
 
    public:
-    explicit YamlParser(YAML::Node yamlConfiguration, std::function<std::filesystem::path(std::string)> = {}, const std::map<std::string, std::string>& overwriteParameters = {});
+    explicit YamlParser(YAML::Node yamlConfiguration, const std::map<std::string, std::string>& overwriteParameters = {});
     ~YamlParser() override = default;
 
     /***
      * Direct creation using a yaml string
      * @param yamlString
      */
-    explicit YamlParser(const std::string& yamlString, std::function<std::filesystem::path(std::string)> = {}, const std::map<std::string, std::string>& overwriteParameters = {});
+    explicit YamlParser(const std::string& yamlString, const std::map<std::string, std::string>& overwriteParameters = {});
 
     /***
      * Read in file from system
      * @param filePath
      */
-    explicit YamlParser(const std::filesystem::path& filePath, std::function<std::filesystem::path(std::string)> = {}, const std::map<std::string, std::string>& overwriteParameters = {});
+    explicit YamlParser(const std::filesystem::path& filePath, const std::map<std::string, std::string>& overwriteParameters = {});
 
     /* gets the class type represented by this factory */
     const std::string& GetClassType() const override { return type; }
@@ -137,9 +135,6 @@ class YamlParser : public Factory {
 
     /* return an int for the specified identifier*/
     int Get(const ArgumentIdentifier<int>& identifier) const override { return GetValueFromYaml<int>(identifier); }
-
-    /* return the path to file specified */
-    std::filesystem::path Get(const ArgumentIdentifier<std::filesystem::path>& identifier) const override;
 
     /* return a factory that serves as the root of the requested item */
     std::shared_ptr<Factory> GetFactory(const std::string& name) const override;

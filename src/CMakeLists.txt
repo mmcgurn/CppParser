@@ -12,6 +12,9 @@ target_sources(cppParserLibrary
         demangler.cpp
         instanceTracker.hpp
         instanceTracker.cpp
+        pathLocator.hpp
+        localPath.hpp
+        localPath.cpp
         )
 
 target_include_directories(cppParserLibrary PUBLIC ${CMAKE_CURRENT_LIST_DIR})

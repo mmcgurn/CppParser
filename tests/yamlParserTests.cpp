@@ -560,7 +560,7 @@ TEST(YamlParserTests, ShouldGetListAsString) {
     ASSERT_EQ(list2, expectedValues2);
 }
 
-TEST(YamlParserTests, ShouldLocateLocalFile) {
+TEST(YamlParserTests, ShouldLocateLocalPath) {
     // arrange
     fs::path tmpFile = fs::temp_directory_path() / "tempFile.txt";
     {
@@ -578,7 +578,7 @@ TEST(YamlParserTests, ShouldLocateLocalFile) {
         ofs.close();
     }
 
-    auto yamlParser = std::make_shared<YamlParser>(tempYaml);
+    std::shared_ptr<cppParser::Factory> yamlParser = std::make_shared<YamlParser>(tempYaml);
 
     // act
     auto computedFilePath = yamlParser->Get(ArgumentIdentifier<std::filesystem::path>{"fileName"});
@@ -592,14 +592,14 @@ TEST(YamlParserTests, ShouldLocateLocalFile) {
     fs::remove(tempYaml);
 }
 
-TEST(YamlParserTests, ShouldReturnDefaultValueWhenOptional) {
+TEST(YamlParserTests, ShouldReturnDefaultValueWhenOptionalPath) {
     // arrange
     std::stringstream yaml;
     yaml << "---" << std::endl;
     yaml << " item1: 22" << std::endl;
     yaml << " item2:" << std::endl;
 
-    auto yamlParser = std::make_shared<YamlParser>(yaml.str());
+    std::shared_ptr<cppParser::Factory> yamlParser = std::make_shared<YamlParser>(yaml.str());
 
     // act
     auto computedFilePath = yamlParser->Get(ArgumentIdentifier<std::filesystem::path>{.inputName = "fileName", .optional = true});
@@ -608,14 +608,14 @@ TEST(YamlParserTests, ShouldReturnDefaultValueWhenOptional) {
     ASSERT_EQ(std::string(), computedFilePath);
 }
 
-TEST(YamlParserTests, ShouldThrowErrorWhenNotOptional) {
+TEST(YamlParserTests, ShouldThrowErrorWhenNotOptionalPath) {
     // arrange
     std::stringstream yaml;
     yaml << "---" << std::endl;
     yaml << " item1: 22" << std::endl;
     yaml << " item2:" << std::endl;
 
-    auto yamlParser = std::make_shared<YamlParser>(yaml.str());
+    std::shared_ptr<cppParser::Factory> yamlParser = std::make_shared<YamlParser>(yaml.str());
 
     // act
     // assert
@@ -690,7 +690,7 @@ TEST(YamlParserTests, ShouldAllowOverWrittenValues) {
     };
 
     // act
-    auto yamlParser = std::make_shared<YamlParser>(yaml.str(), nullptr, params);
+    auto yamlParser = std::make_shared<YamlParser>(yaml.str(), params);
 
     // assert
     ASSERT_EQ("44", yamlParser->GetByName<std::string>("item1"));
