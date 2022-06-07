@@ -23,7 +23,7 @@ class LocalPath : public PathLocator {
      * Return the defined path
      * @return
      */
-    std::filesystem::path Locate(const std::vector<std::filesystem::path>& searchPaths) override;
+    std::filesystem::path Locate(const std::vector<std::filesystem::path>& searchPaths = {}) override;
 };
 
 }  // namespace cppParser
