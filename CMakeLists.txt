@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 # Create the new project
-project(CppParser VERSION 0.1.9)
+project(CppParser VERSION 0.2.0)
 
 # Set the standards
 set(CMAKE_CXX_STANDARD 17)

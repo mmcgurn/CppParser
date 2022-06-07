@@ -560,7 +560,7 @@ TEST(YamlParserTests, ShouldGetListAsString) {
     ASSERT_EQ(list2, expectedValues2);
 }
 
-TEST(YamlParserTests, ShouldLocateLocalFile) {
+TEST(YamlParserTests, ShouldLocateLocalPath) {
     // arrange
     fs::path tmpFile = fs::temp_directory_path() / "tempFile.txt";
     {
@@ -578,7 +578,7 @@ TEST(YamlParserTests, ShouldLocateLocalFile) {
         ofs.close();
     }
 
-    auto yamlParser = std::make_shared<YamlParser>(tempYaml);
+    std::shared_ptr<cppParser::Factory> yamlParser = std::make_shared<YamlParser>(tempYaml);
 
     // act
     auto computedFilePath = yamlParser->Get(ArgumentIdentifier<std::filesystem::path>{"fileName"});
@@ -592,14 +592,51 @@ TEST(YamlParserTests, ShouldLocateLocalFile) {
     fs::remove(tempYaml);
 }
 
-TEST(YamlParserTests, ShouldReturnDefaultValueWhenOptional) {
+TEST(YamlParserTests, ShouldLocateLocalRelativePath) {
+    // arrange
+    fs::path testDirectory = fs::temp_directory_path() / "ShouldLocateLocalRelativePath";
+    if (fs::exists(testDirectory)) {
+        fs::remove_all(testDirectory);
+    }
+    create_directories(testDirectory);
+
+    fs::path tmpFile = testDirectory / "tempFile.txt";
+    {
+        std::ofstream ofs(tmpFile);
+        ofs << " tempFile" << std::endl;
+        ofs.close();
+    }
+
+    fs::path tempYaml = testDirectory / "tempFile.yaml";
+    {
+        std::ofstream ofs(tempYaml);
+        ofs << "---" << std::endl;
+        ofs << " fileName: tempFile.txt" << std::endl;
+        ofs.close();
+    }
+
+    std::shared_ptr<cppParser::Factory> yamlParser = std::make_shared<YamlParser>(tempYaml);
+
+    // act
+    auto computedFilePath = yamlParser->Get(ArgumentIdentifier<std::filesystem::path>{"fileName"});
+
+    // assert
+    ASSERT_TRUE(std::filesystem::exists(computedFilePath));
+    ASSERT_EQ(computedFilePath, std::filesystem::canonical(tmpFile));
+
+    // cleanup
+    fs::remove(tmpFile);
+    fs::remove(tempYaml);
+}
+
+TEST(YamlParserTests, ShouldReturnDefaultValueWhenOptionalPath) {
     // arrange
     std::stringstream yaml;
     yaml << "---" << std::endl;
     yaml << " item1: 22" << std::endl;
     yaml << " item2:" << std::endl;
 
-    auto yamlParser = std::make_shared<YamlParser>(yaml.str());
+    std::shared_ptr<cppParser::Factory> yamlParser = std::make_shared<YamlParser>(yaml.str());
 
     // act
     auto computedFilePath = yamlParser->Get(ArgumentIdentifier<std::filesystem::path>{.inputName = "fileName", .optional = true});
@@ -608,14 +645,14 @@ TEST(YamlParserTests, ShouldReturnDefaultValueWhenOptional) {
     ASSERT_EQ(std::string(), computedFilePath);
 }
 
-TEST(YamlParserTests, ShouldThrowErrorWhenNotOptional) {
+TEST(YamlParserTests, ShouldThrowErrorWhenNotOptionalPath) {
     // arrange
     std::stringstream yaml;
     yaml << "---" << std::endl;
     yaml << " item1: 22" << std::endl;
     yaml << " item2:" << std::endl;
 
-    auto yamlParser = std::make_shared<YamlParser>(yaml.str());
+    std::shared_ptr<cppParser::Factory> yamlParser = std::make_shared<YamlParser>(yaml.str());
 
     // act
     // assert
@@ -690,7 +727,7 @@ TEST(YamlParserTests, ShouldAllowOverWrittenValues) {
     };
 
     // act
-    auto yamlParser = std::make_shared<YamlParser>(yaml.str(), nullptr, params);
+    auto yamlParser = std::make_shared<YamlParser>(yaml.str(), std::vector<std::filesystem::path>{}, params);
 
     // assert
     ASSERT_EQ("44", yamlParser->GetByName<std::string>("item1"));

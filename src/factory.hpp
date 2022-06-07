@@ -11,6 +11,7 @@
 #include <vector>
 #include "argumentIdentifier.hpp"
 #include "instanceTracker.hpp"
+#include "pathLocator.hpp"
 
 namespace cppParser {
 
@@ -57,9 +58,6 @@ class Factory {
 
     /* return a map of strings */
     virtual std::map<std::string, std::string> Get(const ArgumentIdentifier<std::map<std::string, std::string>>& identifier) const = 0;
-
-    /* returns the path to a file as specified byname */
-    virtual std::filesystem::path Get(const ArgumentIdentifier<std::filesystem::path>& identifier) const = 0;
 
     /* check to see if the child is contained*/
     virtual bool Contains(const std::string& name) const = 0;
@@ -157,12 +155,12 @@ class Factory {
     }
 
     template <typename Interface>
-    inline auto GetByName(const std::string inputName) {
+    inline auto GetByName(const std::string inputName) const {
         return Get(ArgumentIdentifier<Interface>{.inputName = inputName});
     }
 
     template <typename Interface, typename DefaultValueInterface>
-    inline auto GetByName(const std::string inputName, DefaultValueInterface defaultValue) {
+    inline auto GetByName(const std::string inputName, DefaultValueInterface defaultValue) const {
         if (Contains(inputName)) {
             return Get(ArgumentIdentifier<Interface>{.inputName = inputName});
         } else {
@@ -196,6 +194,21 @@ class Factory {
             enumVector.push_back(EnumWrapper<ENUM>(enumString));
         }
         return enumVector;
+    }
+
+    /**
+     * returns the path to a file as specified using a file locator instance
+     * @param identifier
+     * @return
+     */
+    virtual std::filesystem::path Get(const ArgumentIdentifier<std::filesystem::path>& identifier) const {
+        if (identifier.optional && !Contains(identifier.inputName)) {
+            return {};
+        }
+
+        // get the file locator instance
+        auto fileLocator = GetByName<cppParser::PathLocator>(identifier.inputName);
+        return fileLocator->Locate();
     }
 
    protected:
