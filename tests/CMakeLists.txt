@@ -9,7 +9,7 @@ FetchContent_MakeAvailable(googletest)
 
 # Define a test exe
 add_executable(cppParserTests
-        factoryTests.cpp registrarTests.cpp yamlParserTests.cpp)
+        factoryTests.cpp registrarTests.cpp yamlParserTests.cpp localPathTests.cpp)
 target_link_libraries(cppParserTests PUBLIC gtest gmock gtest_main cppParserLibrary cppParserTestLibrary)
 target_link_libraries(cppParserTests PUBLIC cppParserTestLibrary)
 
