@@ -10,7 +10,7 @@ namespace cppParser {
  */
 class LocalPath : public PathLocator {
    private:
-    const std::filesystem::path path;
+    const std::string path;
 
    public:
     /**
@@ -23,7 +23,7 @@ class LocalPath : public PathLocator {
      * Return the defined path
      * @return
      */
-    std::filesystem::path Locate() override;
+    std::filesystem::path Locate(const std::vector<std::filesystem::path>& searchPaths) override;
 };
 
 }  // namespace cppParser

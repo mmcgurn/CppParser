@@ -1,15 +1,17 @@
 #include "yamlParser.hpp"
 #include <utility>
 
-cppParser::YamlParser::YamlParser(const YAML::Node& yamlConfiguration, std::string nodePath, std::string type, std::weak_ptr<InstanceTracker> instanceTracker)
-    : Factory(std::move(instanceTracker)), type(std::move(type)), nodePath(std::move(nodePath)), yamlConfiguration(yamlConfiguration) {
+cppParser::YamlParser::YamlParser(const YAML::Node& yamlConfiguration, std::string nodePath, std::string type, std::vector<std::filesystem::path> searchDirectories,
+                                  std::weak_ptr<InstanceTracker> instanceTracker)
+    : Factory(std::move(instanceTracker)), type(std::move(type)), nodePath(std::move(nodePath)), yamlConfiguration(yamlConfiguration), searchDirectories(std::move(searchDirectories)) {
     // store each child in the map with zero usages
     for (const auto& cn : yamlConfiguration) {
         nodeUsages[YAML::key_to_string(cn.first)] = 0;
     }
 }
 
-cppParser::YamlParser::YamlParser(YAML::Node yamlConfiguration, const std::map<std::string, std::string>& overwriteParameters) : YamlParser(yamlConfiguration, "root", "") {
+cppParser::YamlParser::YamlParser(YAML::Node yamlConfiguration, std::vector<std::filesystem::path> searchDirectories, const std::map<std::string, std::string>& overwriteParameters)
+    : YamlParser(yamlConfiguration, "root", "", std::move(searchDirectories)) {
     // create the root instance of the tracker
     rootInstanceTracker = std::make_shared<InstanceTracker>();
     instanceTracker = rootInstanceTracker;
@@ -20,9 +22,11 @@ cppParser::YamlParser::YamlParser(YAML::Node yamlConfiguration, const std::map<s
     }
 }
 
-cppParser::YamlParser::YamlParser(const std::string& yamlString, const std::map<std::string, std::string>& overwriteParameters) : YamlParser(YAML::Load(yamlString), overwriteParameters) {}
+cppParser::YamlParser::YamlParser(const std::string& yamlString, std::vector<std::filesystem::path> searchDirectories, const std::map<std::string, std::string>& overwriteParameters)
+    : YamlParser(YAML::Load(yamlString), std::move(searchDirectories), overwriteParameters) {}
 
-cppParser::YamlParser::YamlParser(const std::filesystem::path& filePath, const std::map<std::string, std::string>& overwriteParameters) : YamlParser(YAML::LoadFile(filePath), overwriteParameters) {}
+cppParser::YamlParser::YamlParser(const std::filesystem::path& filePath, const std::map<std::string, std::string>& overwriteParameters)
+    : YamlParser(YAML::LoadFile(filePath), {filePath.parent_path()}, overwriteParameters) {}
 
 std::shared_ptr<cppParser::Factory> cppParser::YamlParser::GetFactory(const std::string& name) const {
     // Check to see if the child factory has already been created
@@ -37,7 +41,7 @@ std::shared_ptr<cppParser::Factory> cppParser::YamlParser::GetFactory(const std:
             // Mark all children here on used, because they will be counted in the child
             MarkAllUsed();
             MarkUsage(name);
-            childFactories[name] = std::shared_ptr<YamlParser>(new YamlParser(parameter, childPath, tagType, instanceTracker));
+            childFactories[name] = std::shared_ptr<YamlParser>(new YamlParser(parameter, childPath, tagType, searchDirectories, instanceTracker));
         } else {
             auto parameter = yamlConfiguration[name];
             auto childPath = nodePath + "/" + name;
@@ -52,7 +56,7 @@ std::shared_ptr<cppParser::Factory> cppParser::YamlParser::GetFactory(const std:
 
             // mark usage and store pointer
             MarkUsage(name);
-            childFactories[name] = std::shared_ptr<YamlParser>(new YamlParser(parameter, childPath, tagType, instanceTracker));
+            childFactories[name] = std::shared_ptr<YamlParser>(new YamlParser(parameter, childPath, tagType, searchDirectories, instanceTracker));
         }
     }
 
@@ -89,7 +93,7 @@ std::vector<std::shared_ptr<cppParser::Factory>> cppParser::YamlParser::GetFacto
             tagType = !tagType.empty() ? tagType.substr(1) : tagType;
 
             // mark usage and store pointer
-            childFactories[childName] = std::shared_ptr<YamlParser>(new YamlParser(childParameter, childPath, tagType, instanceTracker));
+            childFactories[childName] = std::shared_ptr<YamlParser>(new YamlParser(childParameter, childPath, tagType, searchDirectories, instanceTracker));
         }
 
         children.push_back(childFactories[childName]);
@@ -151,4 +155,14 @@ void cppParser::YamlParser::ReplaceValue(YAML::Node& yamlConfiguration, const st
             ReplaceValue(childConfig, key.substr(separator + 2), value);
         }
     }
+}
+
+std::filesystem::path cppParser::YamlParser::Get(const cppParser::ArgumentIdentifier<std::filesystem::path>& identifier) const {
+    if (identifier.optional && !Contains(identifier.inputName)) {
+        return {};
+    }
+
+    // get the file locator instance
+    auto fileLocator = GetByName<cppParser::PathLocator>(identifier.inputName);
+    return fileLocator->Locate(searchDirectories);
 }

@@ -15,6 +15,7 @@ class YamlParser : public Factory {
     const YAML::Node yamlConfiguration;
     mutable std::map<std::string, int> nodeUsages;
     mutable std::map<std::string, std::shared_ptr<YamlParser>> childFactories;
+    const std::vector<std::filesystem::path> searchDirectories;
 
     // The root YamlParser should store a shared ptr to a     mutable std::weak_ptr<InstanceTracker> instanceTracker;
     std::shared_ptr<InstanceTracker> rootInstanceTracker;
@@ -25,7 +26,7 @@ class YamlParser : public Factory {
      * @param nodePath
      * @param type
      */
-    YamlParser(const YAML::Node& yamlConfiguration, std::string nodePath, std::string type, std::weak_ptr<InstanceTracker> instanceTracker = {});
+    YamlParser(const YAML::Node& yamlConfiguration, std::string nodePath, std::string type, std::vector<std::filesystem::path> searchDirectories, std::weak_ptr<InstanceTracker> instanceTracker = {});
     inline void MarkUsage(const std::string& key) const {
         if (!key.empty()) {
             nodeUsages[key]++;
@@ -77,14 +78,14 @@ class YamlParser : public Factory {
     static void ReplaceValue(YAML::Node& yamlConfiguration, const std::string& key, const std::string& value);
 
    public:
-    explicit YamlParser(YAML::Node yamlConfiguration, const std::map<std::string, std::string>& overwriteParameters = {});
+    explicit YamlParser(YAML::Node yamlConfiguration, std::vector<std::filesystem::path> searchDirectories = {}, const std::map<std::string, std::string>& overwriteParameters = {});
     ~YamlParser() override = default;
 
     /***
      * Direct creation using a yaml string
      * @param yamlString
      */
-    explicit YamlParser(const std::string& yamlString, const std::map<std::string, std::string>& overwriteParameters = {});
+    explicit YamlParser(const std::string& yamlString, std::vector<std::filesystem::path> searchDirectories = {}, const std::map<std::string, std::string>& overwriteParameters = {});
 
     /***
      * Read in file from system
@@ -162,6 +163,13 @@ class YamlParser : public Factory {
             return false;
         }
     }
+
+    /**
+     * returns the path to a file as specified using a file locator instance.  This override allows searching in search directories
+     * @param identifier
+     * @return
+     */
+    std::filesystem::path Get(const ArgumentIdentifier<std::filesystem::path>& identifier) const override;
 };
 }  // namespace cppParser
 

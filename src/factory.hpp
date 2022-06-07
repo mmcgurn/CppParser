@@ -201,7 +201,7 @@ class Factory {
      * @param identifier
      * @return
      */
-    std::filesystem::path Get(const ArgumentIdentifier<std::filesystem::path>& identifier) const {
+    virtual std::filesystem::path Get(const ArgumentIdentifier<std::filesystem::path>& identifier) const {
         if (identifier.optional && !Contains(identifier.inputName)) {
             return {};
         }

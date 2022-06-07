@@ -2,6 +2,7 @@
 #define CPPPARSER_PATHLOCATOR_HPP
 
 #include <filesystem>
+#include <vector>
 
 namespace cppParser {
 /**
@@ -9,7 +10,7 @@ namespace cppParser {
  */
 class PathLocator {
    public:
-    virtual std::filesystem::path Locate() = 0;
+    virtual std::filesystem::path Locate(const std::vector<std::filesystem::path>& searchPaths = {}) = 0;
     virtual ~PathLocator() = default;
 };
 }  // namespace cppParser
