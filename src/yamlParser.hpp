@@ -17,7 +17,7 @@ class YamlParser : public Factory {
     mutable std::map<std::string, std::shared_ptr<YamlParser>> childFactories;
     const std::vector<std::filesystem::path> searchDirectories;
 
-    // The root YamlParser should store a shared ptr to a     mutable std::weak_ptr<InstanceTracker> instanceTracker;
+    // The root YamlParser should store a shared ptr to a mutable std::weak_ptr<InstanceTracker> instanceTracker;
     std::shared_ptr<InstanceTracker> rootInstanceTracker;
 
     /***
@@ -62,7 +62,7 @@ class YamlParser : public Factory {
         // treat this yamlConfiguration as the item if the identifier is default
         auto parameter = GetParameter(identifier);
         if (!parameter) {
-            if (identifier.optional) {
+            if (identifier.type == ArgumentType::Optional ) {
                 return {};
             } else {
                 throw std::invalid_argument("unable to locate " + identifier.inputName + " in " + nodePath);
@@ -101,7 +101,7 @@ class YamlParser : public Factory {
         // treat this yamlConfiguration as the item if the identifier is default
         auto parameter = GetParameter(identifier);
         if (!parameter) {
-            if (identifier.optional) {
+            if (identifier.type == ArgumentType::Optional) {
                 return {};
             } else {
                 throw std::invalid_argument("unable to locate " + identifier.inputName + " in " + nodePath);

@@ -14,7 +14,7 @@ class Listing {
         const std::string name;
         const std::string interface;
         const std::string description;
-        const bool optional;
+        const  optional;
 
         bool operator==(const ArgumentEntry &other) const;
     };

@@ -107,7 +107,7 @@ class Factory {
     /* produce a shared pointer for the specified interface and type */
     template <typename Interface>
     std::shared_ptr<Interface> Get(const ArgumentIdentifier<Interface>& identifier) const {
-        if (identifier.optional && !Contains(identifier.inputName)) {
+        if (identifier.type == ArgumentType::Optional && !Contains(identifier.inputName)) {
             return {};
         }
 
@@ -119,7 +119,7 @@ class Factory {
 
     template <typename Interface>
     std::vector<std::shared_ptr<Interface>> Get(const ArgumentIdentifier<std::vector<Interface>>& identifier) const {
-        if (identifier.optional && !Contains(identifier.inputName)) {
+        if (identifier.type == ArgumentType::Optional && !Contains(identifier.inputName)) {
             return {};
         }
 
@@ -202,9 +202,10 @@ class Factory {
      * @return
      */
     virtual std::filesystem::path Get(const ArgumentIdentifier<std::filesystem::path>& identifier) const {
-        if (identifier.optional && !Contains(identifier.inputName)) {
+        if (identifier.type == ArgumentType::Optional && !Contains(identifier.inputName)) {
             return {};
         }
+        // TODO: add global check
 
         // get the file locator instance
         auto fileLocator = GetByName<cppParser::PathLocator>(identifier.inputName);

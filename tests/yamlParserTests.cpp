@@ -1174,4 +1174,29 @@ TEST(YamlParserTests, ShouldReportSingleInstanceOfUnusedChildrenWhenUsingAnchors
     ASSERT_EQ("root/item1/testInt2", unusedValues[1]);
 }
 
+
+class YamlMockDefaultInstance {};
+
+
+TEST(YamlParserTests, ShouldAllowDefaultInstance) {
+    std::stringstream yaml;
+    yaml << "---" << std::endl;
+    yaml << " item1: &anchor" << std::endl;
+    yaml << "   testInt: 1" << std::endl;
+    yaml << "   testInt2: 1" << std::endl;
+    yaml << " item2: *anchor" << std::endl;
+    yaml << " item3: *anchor" << std::endl;
+
+    auto yamlParser = std::make_shared<YamlParser>(yaml.str());
+
+    // act
+    auto defaultInstance = yamlParser->GetByName<YamlMockDefaultInstance>("item4");
+
+    // assert
+    auto unusedValues = yamlParser->GetUnusedValues();
+    ASSERT_EQ(unusedValues.size(), 2);
+    ASSERT_EQ("root/item3", unusedValues[0]);
+    ASSERT_EQ("root/item1/testInt2", unusedValues[1]);
+}
+
 }  // namespace cppParserTesting
