@@ -128,3 +128,6 @@ export(EXPORT cppParserLibraryTargets
         FILE "${CMAKE_CURRENT_BINARY_DIR}/cmake/cppParserLibraryTargets.cmake"
         NAMESPACE CHREST::
         )
+
+# set library properties
+set_property(TARGET cppParserLibrary PROPERTY POSITION_INDEPENDENT_CODE ON)
