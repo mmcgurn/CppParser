@@ -1,17 +1,17 @@
 # Download google test
+SET(INSTALL_GTEST OFF CACHE BOOL "Don't install gtest" FORCE)
 FetchContent_Declare(
         googletest
         GIT_REPOSITORY https://github.com/google/googletest.git
         GIT_TAG main
 )
-
 FetchContent_MakeAvailable(googletest)
 
 # Define a test exe
 add_executable(cppParserTests
         factoryTests.cpp registrarTests.cpp yamlParserTests.cpp localPathTests.cpp)
-target_link_libraries(cppParserTests PUBLIC gtest gmock gtest_main cppParserLibrary cppParserTestLibrary)
-target_link_libraries(cppParserTests PUBLIC cppParserTestLibrary)
+target_link_libraries(cppParserTests PRIVATE gtest gmock gtest_main cppParserLibrary cppParserTestLibrary)
+target_link_libraries(cppParserTests PRIVATE cppParserTestLibrary yaml-cpp)
 
 gtest_discover_tests(cppParserTests
         # set a working directory so your project root so that you can find test data via paths relative to the project root
