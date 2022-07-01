@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.14)
 
 # Create the new project
-project(CppParser VERSION 0.2.0)
+project(CppParser VERSION 0.2.1)
 
 # Set the standards
 set(CMAKE_CXX_STANDARD 17)
 
 # Create the project
-add_library(cppParserLibrary)
+add_library(cppParserLibrary SHARED)
 
 # make cache variables for install destinations
 include(GNUInstallDirs)
@@ -80,7 +80,7 @@ install(TARGETS cppParserLibrary cppParserTestLibrary yaml-cpp chrestCompilerFla
 
 # install header file(s)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "*.hpp")
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests/include/* DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "*.hpp")
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "*.hpp")
 
 # generate and install export file
 install(EXPORT cppParserLibraryTargets
@@ -96,9 +96,9 @@ include(CMakePackageConfigHelpers)
 get_target_property(interfaceListOrg cppParserLibrary INTERFACE_SOURCES)
 foreach(interfaceItem ${interfaceListOrg})
     # Replace this hard code value with relative values
-    file(RELATIVE_PATH relativeHeaderPath ${PROJECT_SOURCE_DIR} ${interfaceItem})
+    file(RELATIVE_PATH relativeHeaderPath ${PROJECT_SOURCE_DIR}/src ${interfaceItem})
     # add the lists back
-    list(APPEND interfaceListUpdated "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${relativeHeaderPath}>")
+    list(APPEND interfaceListUpdated "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/${relativeHeaderPath}>")
     list(APPEND interfaceListUpdated "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${relativeHeaderPath}>")
 endforeach()
 set_property(TARGET cppParserLibrary PROPERTY INTERFACE_SOURCES ${interfaceListUpdated})
