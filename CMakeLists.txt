@@ -17,7 +17,7 @@ include(FetchContent)
 
 # check for and download yaml-cpp
 IF (TARGET yaml-cpp)
-    message("Found yaml-cpp target")
+    message(STATUS "Found yaml-cpp target")
 ELSE ()
     # Load the the yamlLibrary
     # turn off yaml-cpp options
