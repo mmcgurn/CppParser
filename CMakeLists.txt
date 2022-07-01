@@ -16,9 +16,9 @@ include(GNUInstallDirs)
 include(FetchContent)
 
 # check for and download yaml-cpp
-IF(TARGET yaml-cpp)
+IF (TARGET yaml-cpp)
     message("Found yaml-cpp target")
-ELSE()
+ELSE ()
     # Load the the yamlLibrary
     # turn off yaml-cpp options
     set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -31,7 +31,7 @@ ELSE()
             GIT_TAG yaml-cpp-0.7.0
     )
     FetchContent_MakeAvailable(yaml-cpp)
-ENDIF()
+ENDIF ()
 
 # load in the build/compiler standards
 FetchContent_Declare(
@@ -53,7 +53,7 @@ target_include_directories(cppParserTestLibrary
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 
 # Check if we should enable testing options
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
     include(CTest)
 
@@ -61,12 +61,12 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(clangFormatter.cmake)
 
     # Setup and configure testing
-    if(BUILD_TESTING)
+    if (BUILD_TESTING)
         enable_testing()
         include(GoogleTest)
         add_subdirectory(tests)
-    endif()
-endif()
+    endif ()
+endif ()
 
 # install the cppParserLibrary (and others) target and create export-set
 install(TARGETS cppParserLibrary cppParserTestLibrary yaml-cpp chrestCompilerFlags
@@ -94,13 +94,13 @@ include(CMakePackageConfigHelpers)
 
 # march over each target property to update path to includes
 get_target_property(interfaceListOrg cppParserLibrary INTERFACE_SOURCES)
-foreach(interfaceItem ${interfaceListOrg})
+foreach (interfaceItem ${interfaceListOrg})
     # Replace this hard code value with relative values
     file(RELATIVE_PATH relativeHeaderPath ${PROJECT_SOURCE_DIR}/src ${interfaceItem})
     # add the lists back
     list(APPEND interfaceListUpdated "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/${relativeHeaderPath}>")
     list(APPEND interfaceListUpdated "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${relativeHeaderPath}>")
-endforeach()
+endforeach ()
 set_property(TARGET cppParserLibrary PROPERTY INTERFACE_SOURCES ${interfaceListUpdated})
 
 # generate the version file for the config file
