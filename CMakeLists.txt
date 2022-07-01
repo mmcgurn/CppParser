@@ -131,3 +131,4 @@ export(EXPORT cppParserLibraryTargets
 
 # set library properties
 set_property(TARGET cppParserLibrary PROPERTY POSITION_INDEPENDENT_CODE ON)
+set_property(TARGET yaml-cpp PROPERTY POSITION_INDEPENDENT_CODE ON)
