@@ -1,20 +1,25 @@
 target_sources(cppParserLibrary
+        PRIVATE
+        listing.cpp
+        yamlParser.cpp
+        demangler.cpp
+        instanceTracker.cpp
+        localPath.cpp
         PUBLIC
         argumentIdentifier.hpp
         enumWrapper.hpp
         factory.hpp
         listing.hpp
-        listing.cpp
         registrar.hpp
         yamlParser.hpp
-        yamlParser.cpp
         demangler.hpp
-        demangler.cpp
         instanceTracker.hpp
-        instanceTracker.cpp
         pathLocator.hpp
         localPath.hpp
-        localPath.cpp
         )
 
-target_include_directories(cppParserLibrary PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+target_include_directories(cppParserLibrary
+        PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+        )
