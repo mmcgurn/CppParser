@@ -16,6 +16,7 @@ target_sources(cppParserLibrary
         instanceTracker.hpp
         pathLocator.hpp
         localPath.hpp
+        creator.hpp
         )
 
 target_include_directories(cppParserLibrary

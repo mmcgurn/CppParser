@@ -10,14 +10,11 @@
 #include <unordered_set>
 #include <vector>
 #include "argumentIdentifier.hpp"
+#include "creator.hpp"
 #include "instanceTracker.hpp"
 #include "pathLocator.hpp"
 
 namespace cppParser {
-
-class Factory;
-template <typename Interface>
-std::shared_ptr<Interface> ResolveAndCreate(std::shared_ptr<Factory> factory);
 
 class Factory {
    protected:
@@ -92,8 +89,17 @@ class Factory {
             }
         }
 
-        // build the new instance
-        auto newInstance = ResolveAndCreate<Interface>(childFactory);
+        auto childType = childFactory->GetClassType();
+        std::function<std::shared_ptr<Interface>(std::shared_ptr<Factory>)> createMethod = Creator<Interface>::GetCreateMethod(childType);
+        if (!createMethod) {
+            if (childType.empty()) {
+                throw std::invalid_argument("no default creator specified for interface " + Demangler::Demangle<Interface>());
+            } else {
+                throw std::invalid_argument("unknown type " + childType);
+            }
+        }
+
+        auto newInstance = createMethod(childFactory);
 
         // store the instance if needed
         if (auto instanceTrackerPtr = instanceTracker.lock()) {
