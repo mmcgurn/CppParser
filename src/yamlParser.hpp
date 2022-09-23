@@ -27,11 +27,7 @@ class YamlParser : public Factory {
      * @param type
      */
     YamlParser(const YAML::Node& yamlConfiguration, std::string nodePath, std::string type, std::vector<std::filesystem::path> searchDirectories, std::weak_ptr<InstanceTracker> instanceTracker = {});
-    inline void MarkUsage(const std::string& key) const {
-        if (!key.empty()) {
-            nodeUsages[key]++;
-        }
-    }
+    inline void MarkUsage(const std::string& key) const { nodeUsages[key]++; }
 
     /**
      * Marks all of the keys used.
@@ -109,7 +105,7 @@ class YamlParser : public Factory {
         }
         MarkUsage(identifier.inputName);
         if (parameter.IsSequence()) {
-            // Merge the results into a single space seperated string
+            // Merge the results into a single space separated string
             std::stringstream ss;
             for (const auto& v : parameter) {
                 ss << v.template as<std::string>() << " ";

@@ -287,7 +287,7 @@ TEST(YamlParserTests, ShouldReportUnusedChildren) {
     yaml << "---" << std::endl;
     yaml << " item1: 22" << std::endl;
     yaml << " item2: !ablate::info::green" << std::endl;
-    yaml << "   child1: 12  " << std::endl;
+    yaml << "   child1: [12]  " << std::endl;
     yaml << "   child2: im a string " << std::endl;
     yaml << " item3:" << std::endl;
     yaml << "   child1: im a string " << std::endl;
@@ -313,7 +313,7 @@ TEST(YamlParserTests, ShouldReportUnusedChildren) {
 
     // act
     yamlParser->Get(ArgumentIdentifier<int>{"item1"});
-    yamlParser->GetFactory("item2")->Get(ArgumentIdentifier<std::string>{"child1"});
+    yamlParser->GetFactory("item2")->GetFactory("child1")->Get(ArgumentIdentifier<std::string>{});
     yamlParser->GetFactory("item5")->GetFactory("child1")->Get(ArgumentIdentifier<int>{"childchild1"});
     yamlParser->GetFactorySequence("item6")[0]->Get(ArgumentIdentifier<int>{"child2"});
     yamlParser->GetFactory("item7")->GetFactory("")->Get(ArgumentIdentifier<int>{"childchild1"});
