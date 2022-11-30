@@ -29,8 +29,25 @@ class Listing {
         bool operator==(const ClassEntry &other) const;
     };
 
-    // provide access to the listing
+    struct DerivedEntry {
+        const std::string interface;
+        const std::string className;
+        const bool defaultConstructor;
+
+        bool operator==(const DerivedEntry &other) const;
+    };
+
+    /**
+     * record normal listing
+     * @param entry
+     */
     virtual void RecordListing(ClassEntry entry);
+
+    /**
+     * record derived listing
+     * @param entry
+     */
+    virtual void RecordListing(DerivedEntry entry);
 
     // get the singleton instance
     static Listing &Get();
@@ -46,6 +63,8 @@ class Listing {
 
     std::map<std::string, std::vector<ClassEntry>> entries;
 
+    std::map<std::string, std::vector<DerivedEntry>> derivedEntries;
+
    protected:
     Listing() = default;
 
@@ -59,6 +78,8 @@ std::ostream &operator<<(std::ostream &os, const Listing &listing);
 std::ostream &operator<<(std::ostream &os, const Listing::ArgumentEntry &argumentEntry);
 
 std::ostream &operator<<(std::ostream &os, const Listing::ClassEntry &classEntry);
+
+std::ostream &operator<<(std::ostream &os, const Listing::DerivedEntry &classEntry);
 
 }  // namespace cppParser
 #endif  // CPPPARSER_LISTING_HPP

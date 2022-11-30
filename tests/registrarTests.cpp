@@ -19,6 +19,7 @@ class MockInterface {
 class MockListing : public cppParser::Listing {
    public:
     MOCK_METHOD(void, RecordListing, (ClassEntry entry));
+    MOCK_METHOD(void, RecordListing, (DerivedEntry entry));
 };
 
 class MockClass1 : public MockInterface {
@@ -252,6 +253,24 @@ TEST(RegistrarTests, ShouldRegisterFunctionForClassAndRecordInLog) {
     // assert
     auto createMethod = Creator<MockInterface>::GetCreateMethod("mockClass6");
     ASSERT_TRUE(createMethod != nullptr);
+
+    // cleanup
+    Listing::ReplaceListing(nullptr);
+}
+
+class MockParentClass {};
+
+class MockChildClass : public MockParentClass {};
+
+TEST(RegistrarTests, ShouldRegisterDerivedAndRecordInLog) {
+    // arrange
+    auto mockListing = std::make_shared<MockListing>();
+    EXPECT_CALL(*mockListing, RecordListing(Listing::DerivedEntry{.interface = Demangler::Demangle<MockParentClass>(), .className = "mockChildClass"})).Times(::testing::Exactly(1));
+
+    Listing::ReplaceListing(mockListing);
+
+    // act
+    Registrar<MockParentClass>::RegisterDerived<MockChildClass>(false, "mockChildClass");
 
     // cleanup
     Listing::ReplaceListing(nullptr);
