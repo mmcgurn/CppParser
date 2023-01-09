@@ -7,7 +7,7 @@ project(CppParser VERSION 0.2.5)
 set(CMAKE_CXX_STANDARD 17)
 
 # Create the project
-add_library(cppParserLibrary SHARED)
+add_library(cppParserLibrary OBJECT)
 
 # make cache variables for install destinations
 include(GNUInstallDirs)
@@ -37,7 +37,7 @@ ENDIF ()
 FetchContent_Declare(
         chrestCompilerFlags
         GIT_REPOSITORY https://github.com/UBCHREST/chrestCompilerFlags.git
-        GIT_TAG main
+        GIT_TAG mcgurn/viz
 )
 FetchContent_MakeAvailable(chrestCompilerFlags)
 
