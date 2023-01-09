@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.18.4)
 
 # Create the new project
-project(CppParser VERSION 0.2.5)
+project(CppParser VERSION 0.2.6)
 
 # Set the standards
 set(CMAKE_CXX_STANDARD 17)
 
 # Create the project
-add_library(cppParserLibrary SHARED)
+add_library(cppParserLibrary OBJECT)
 
 # make cache variables for install destinations
 include(GNUInstallDirs)
