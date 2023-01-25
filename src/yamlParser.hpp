@@ -116,8 +116,6 @@ class YamlParser : public Factory {
         }
     }
 
-    std::vector<std::string> Get(const ArgumentIdentifier<std::vector<std::string>>& identifier) const override { return GetValueFromYaml<std::vector<std::string>>(identifier); }
-
     bool Get(const ArgumentIdentifier<bool>& identifier) const override { return GetValueFromYaml<bool>(identifier); };
 
     double Get(const ArgumentIdentifier<double>& identifier) const override { return GetValueFromYaml<double>(identifier); };
@@ -125,6 +123,33 @@ class YamlParser : public Factory {
     std::vector<int> Get(const ArgumentIdentifier<std::vector<int>>& identifier) const override { return GetValueFromYaml<std::vector<int>>(identifier); }
 
     std::vector<double> Get(const ArgumentIdentifier<std::vector<double>>& identifier) const override { return GetValueFromYaml<std::vector<double>>(identifier); }
+
+    std::vector<std::string> Get(const ArgumentIdentifier<std::vector<std::string>>& identifier) const override { return GetValueFromYaml<std::vector<std::string>>(identifier); }
+
+    /**
+     * Vector of vector of ints
+     * @param identifier
+     * @return
+     */
+    std::vector<std::vector<int>> Get(const ArgumentIdentifier<std::vector<std::vector<int>>>& identifier) const override { return GetValueFromYaml<std::vector<std::vector<int>>>(identifier); }
+
+    /**
+     * Vector of vector of double
+     * @param identifier
+     * @return
+     */
+    std::vector<std::vector<double>> Get(const ArgumentIdentifier<std::vector<std::vector<double>>>& identifier) const override {
+        return GetValueFromYaml<std::vector<std::vector<double>>>(identifier);
+    }
+
+    /**
+     * Vector of vector of strings
+     * @param identifier
+     * @return
+     */
+    std::vector<std::vector<std::string>> Get(const ArgumentIdentifier<std::vector<std::vector<std::string>>>& identifier) const override {
+        return GetValueFromYaml<std::vector<std::vector<std::string>>>(identifier);
+    }
 
     std::map<std::string, std::string> Get(const ArgumentIdentifier<std::map<std::string, std::string>>& identifier) const override {
         return GetValueFromYaml<std::map<std::string, std::string>>(identifier);

@@ -8,6 +8,7 @@
 #include <memory>
 #include <string>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 #include "argumentIdentifier.hpp"
 #include "creator.hpp"
@@ -21,7 +22,7 @@ class Factory {
     mutable std::weak_ptr<InstanceTracker> instanceTracker;
 
    public:
-    explicit Factory(std::weak_ptr<InstanceTracker> instanceTracker = {}) : instanceTracker(instanceTracker) {}
+    explicit Factory(std::weak_ptr<InstanceTracker> instanceTracker = {}) : instanceTracker(std::move(instanceTracker)) {}
     virtual ~Factory() = default;
 
     /* return a factory that serves as the root of the requested item */
@@ -52,6 +53,15 @@ class Factory {
 
     /* return a vector of double */
     virtual std::vector<double> Get(const ArgumentIdentifier<std::vector<double>>& identifier) const = 0;
+
+    /* return a vector of vectors of int */
+    virtual std::vector<std::vector<int>> Get(const ArgumentIdentifier<std::vector<std::vector<int>>>& identifier) const = 0;
+
+    /* return a vector of vectors of double */
+    virtual std::vector<std::vector<double>> Get(const ArgumentIdentifier<std::vector<std::vector<double>>>& identifier) const = 0;
+
+    /* return a vector of vectors of strings */
+    virtual std::vector<std::vector<std::string>> Get(const ArgumentIdentifier<std::vector<std::vector<std::string>>>& identifier) const = 0;
 
     /* return a map of strings */
     virtual std::map<std::string, std::string> Get(const ArgumentIdentifier<std::map<std::string, std::string>>& identifier) const = 0;
@@ -161,12 +171,12 @@ class Factory {
     }
 
     template <typename Interface>
-    inline auto GetByName(const std::string inputName) const {
+    inline auto GetByName(const std::string& inputName) const {
         return Get(ArgumentIdentifier<Interface>{.inputName = inputName});
     }
 
     template <typename Interface, typename DefaultValueInterface>
-    inline auto GetByName(const std::string inputName, DefaultValueInterface defaultValue) const {
+    inline auto GetByName(const std::string& inputName, DefaultValueInterface defaultValue) const {
         if (Contains(inputName)) {
             return Get(ArgumentIdentifier<Interface>{.inputName = inputName});
         } else {

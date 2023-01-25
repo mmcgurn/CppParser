@@ -1174,4 +1174,70 @@ TEST(YamlParserTests, ShouldReportSingleInstanceOfUnusedChildrenWhenUsingAnchors
     ASSERT_EQ("root/item1/testInt2", unusedValues[1]);
 }
 
+TEST(YamlParserTests, ShouldReturnVectorOfVectorsOfInts) {
+    // arrange
+    std::stringstream yaml;
+    yaml << "---" << std::endl;
+    yaml << " item1: 22" << std::endl;
+    yaml << " item2:" << std::endl;
+    yaml << "   - [1, 2, 3]  " << std::endl;
+    yaml << "   - [4, 5] " << std::endl;
+    yaml << "   - [7, 8, 9]" << std::endl;
+    yaml << "   - []" << std::endl;
+    yaml << "   - [3, 2]" << std::endl;
+
+    auto yamlParser = std::make_shared<YamlParser>(yaml.str());
+
+    // act
+    auto vectorOfVectors = yamlParser->Get(ArgumentIdentifier<std::vector<std::vector<int>>>{"item2"});
+
+    // assert
+    std::vector<std::vector<int>> expectedValues = {{1, 2, 3}, {4, 5}, {7, 8, 9}, {}, {3, 2}};
+    ASSERT_EQ(vectorOfVectors, expectedValues);
+}
+
+TEST(YamlParserTests, ShouldReturnVectorOfVectorsOfDouble) {
+    // arrange
+    std::stringstream yaml;
+    yaml << "---" << std::endl;
+    yaml << " item1: 22" << std::endl;
+    yaml << " item2:" << std::endl;
+    yaml << "   - [1, 2.3, 3]  " << std::endl;
+    yaml << "   - [4, 5.5] " << std::endl;
+    yaml << "   - [7.2, 8, 9]" << std::endl;
+    yaml << "   - []" << std::endl;
+    yaml << "   - [3, 2.3]" << std::endl;
+
+    auto yamlParser = std::make_shared<YamlParser>(yaml.str());
+
+    // act
+    auto vectorOfVectors = yamlParser->Get(ArgumentIdentifier<std::vector<std::vector<double>>>{"item2"});
+
+    // assert
+    std::vector<std::vector<double>> expectedValues = {{1, 2.3, 3}, {4, 5.5}, {7.2, 8, 9}, {}, {3, 2.3}};
+    ASSERT_EQ(vectorOfVectors, expectedValues);
+}
+
+TEST(YamlParserTests, ShouldReturnVectorOfVectorsOfString) {
+    // arrange
+    std::stringstream yaml;
+    yaml << "---" << std::endl;
+    yaml << " item1: 22" << std::endl;
+    yaml << " item2:" << std::endl;
+    yaml << "   - [a, bb, ccc]  " << std::endl;
+    yaml << "   - [dd, 5.5] " << std::endl;
+    yaml << "   - [ee, f, 9]" << std::endl;
+    yaml << "   - []" << std::endl;
+    yaml << "   - [efg, abc]" << std::endl;
+
+    auto yamlParser = std::make_shared<YamlParser>(yaml.str());
+
+    // act
+    auto vectorOfVectors = yamlParser->Get(ArgumentIdentifier<std::vector<std::vector<std::string>>>{"item2"});
+
+    // assert
+    std::vector<std::vector<std::string>> expectedValues = {{"a", "bb", "ccc"}, {"dd", "5.5"}, {"ee", "f", "9"}, {}, {"efg", "abc"}};
+    ASSERT_EQ(vectorOfVectors, expectedValues);
+}
+
 }  // namespace cppParserTesting
