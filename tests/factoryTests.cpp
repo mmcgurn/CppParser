@@ -1,4 +1,5 @@
 #include <memory>
+#include <utility>
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mockFactory.hpp"
@@ -97,7 +98,7 @@ TEST(FactoryTests, GetByNameShouldReturnDefaultValue) {
 class DefaultMockClass {
    public:
     std::string name;
-    DefaultMockClass(std::string name) : name(name){};
+    explicit DefaultMockClass(std::string name) : name(std::move(name)){};
 };
 
 TEST(FactoryTests, GetByNameShouldReturnDefaultValueClass) {
@@ -237,17 +238,18 @@ TEST(FactoryTests, ShouldGetMapOfSharedPointers) {
  */
 class GrandParentMockClass {
    public:
-    virtual std::string GetLevel() const { return "grandparent"; }
+    [[nodiscard]] virtual std::string GetLevel() const { return "grandparent"; }
+    virtual ~GrandParentMockClass() = default;
 };
 
 class ParentMockClass : public GrandParentMockClass {
    public:
-    virtual std::string GetLevel() const override { return "parent"; }
+    [[nodiscard]] std::string GetLevel() const override { return "parent"; }
 };
 
 class ChildMockClass : public ParentMockClass {
    public:
-    virtual std::string GetLevel() const override { return "child"; }
+    [[nodiscard]] std::string GetLevel() const override { return "child"; }
 };
 
 TEST(FactoryTests, ShouldSupportMultiLevelInheritance) {
@@ -309,17 +311,18 @@ TEST(FactoryTests, ShouldSupportMultiLevelInheritance) {
  */
 class GrandParentMockClassDefault {
    public:
-    virtual std::string GetLevel() const { return "grandparent"; }
+    [[nodiscard]] virtual std::string GetLevel() const { return "grandparent"; }
+    virtual ~GrandParentMockClassDefault() = default;
 };
 
 class ParentMockClassDefault : public GrandParentMockClassDefault {
    public:
-    virtual std::string GetLevel() const override { return "parent"; }
+    [[nodiscard]] std::string GetLevel() const override { return "parent"; }
 };
 
 class ChildMockClassDefault : public ParentMockClassDefault {
    public:
-    virtual std::string GetLevel() const override { return "child"; }
+    [[nodiscard]] std::string GetLevel() const override { return "child"; }
 };
 
 TEST(FactoryTests, ShouldSupportMultiLevelInheritanceWithDefault) {
@@ -342,7 +345,7 @@ TEST(FactoryTests, ShouldSupportMultiLevelInheritanceWithDefault) {
     auto mockFactory = std::make_shared<MockFactory>();
 
     // use an empty class name so that the default item is created
-    std::string emptyClassName = "";
+    std::string emptyClassName;
 
     //  parent, and child factories
     auto grandparentFactory = std::make_shared<MockFactory>();
