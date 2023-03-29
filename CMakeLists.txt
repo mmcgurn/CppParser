@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.18.4)
 project(CppParser VERSION 0.2.9)
 
 # Set the standards
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 # Create the project
 add_library(cppParserLibrary OBJECT)
