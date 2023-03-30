@@ -172,13 +172,13 @@ class Factory {
 
     template <typename Interface>
     inline auto GetByName(const std::string& inputName) const {
-        return Get(ArgumentIdentifier<Interface>{.inputName = inputName});
+        return Get(ArgumentIdentifier<Interface>{.inputName = inputName, .description = "", .optional = false});
     }
 
     template <typename Interface, typename DefaultValueInterface>
     inline auto GetByName(const std::string& inputName, DefaultValueInterface defaultValue) const {
         if (Contains(inputName)) {
-            return Get(ArgumentIdentifier<Interface>{.inputName = inputName});
+            return Get(ArgumentIdentifier<Interface>{.inputName = inputName, .description = "", .optional = false});
         } else {
             return defaultValue;
         }
@@ -204,7 +204,7 @@ class Factory {
      */
     template <typename ENUM>
     std::vector<ENUM> Get(const ArgumentIdentifier<std::vector<EnumWrapper<ENUM>>>& identifier) const {
-        auto stringVector = Get(ArgumentIdentifier<std::vector<std::string>>{.inputName = identifier.inputName, .optional = identifier.optional});
+        auto stringVector = Get(ArgumentIdentifier<std::vector<std::string>>{.inputName = identifier.inputName, .description = "", .optional = identifier.optional});
         std::vector<ENUM> enumVector;
         for (const auto& enumString : stringVector) {
             enumVector.push_back(EnumWrapper<ENUM>(enumString));
