@@ -192,7 +192,7 @@ class Factory {
      */
     template <typename ENUM>
     ENUM Get(const ArgumentIdentifier<EnumWrapper<ENUM>>& identifier) const {
-        auto stringValue = Get(ArgumentIdentifier<std::string>{.inputName = identifier.inputName, .optional = identifier.optional});
+        auto stringValue = Get(ArgumentIdentifier<std::string>{.inputName = identifier.inputName, .description = "", .optional = identifier.optional});
         return EnumWrapper<ENUM>(stringValue);
     }
 
