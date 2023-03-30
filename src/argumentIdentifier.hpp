@@ -19,8 +19,8 @@ namespace cppParser {
 template <typename Interface>
 struct ArgumentIdentifier {
     const std::string inputName;
-    const std::string description = "";
-    const bool optional = false;
+    const std::string description;
+    const bool optional;
     bool operator==(const ArgumentIdentifier<Interface>& other) const { return inputName == other.inputName && optional == other.optional; }
 };
 
