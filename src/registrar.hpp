@@ -120,7 +120,7 @@ class Registrar {
         if (auto it = methods.find(className); it == methods.end()) {
             // Record the entry
             Listing::Get().RecordListing(
-                Listing::ClassEntry{.interface = Demangler::Demangle<Interface>(), .className = className, .description = description, .defaultConstructor = defaultConstructor});
+                Listing::ClassEntry{.interface = Demangler::Demangle<Interface>(), .className = className, .description = description, .arguments = {}, .defaultConstructor = defaultConstructor});
 
             // create method
             methods[className] = method;
@@ -143,7 +143,7 @@ class Registrar {
         if (auto it = methods.find(className); it == methods.end()) {
             // Record the entry
             Listing::Get().RecordListing(
-                Listing::ClassEntry{.interface = Demangler::Demangle<Interface>(), .className = className, .description = description, .defaultConstructor = defaultConstructor});
+                Listing::ClassEntry{.interface = Demangler::Demangle<Interface>(), .className = className, .description = description, .arguments = {}, .defaultConstructor = defaultConstructor});
 
             // create method
             methods[className] = [](std::shared_ptr<Factory> factory) { return std::make_shared<Class>(factory); };
@@ -166,7 +166,7 @@ class Registrar {
         if (auto it = methods.find(className); it == methods.end()) {
             // Record the entry
             Listing::Get().RecordListing(
-                Listing::ClassEntry{.interface = Demangler::Demangle<Interface>(), .className = className, .description = description, .defaultConstructor = defaultConstructor});
+                Listing::ClassEntry{.interface = Demangler::Demangle<Interface>(), .className = className, .description = description, .arguments = {}, .defaultConstructor = defaultConstructor});
 
             // create method
             methods[className] = [](const std::shared_ptr<Factory>& factory) { return std::make_shared<Class>(); };
