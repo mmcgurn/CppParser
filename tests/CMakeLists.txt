@@ -21,3 +21,5 @@ gtest_discover_tests(cppParserTests
 
 # Allow public access to the header files in the directory
 target_include_directories(cppParserTests PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+
+set_property(TARGET cppParserTests PROPERTY CXX_STANDARD 20)

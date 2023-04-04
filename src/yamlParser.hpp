@@ -77,6 +77,8 @@ class YamlParser : public Factory {
     explicit YamlParser(YAML::Node yamlConfiguration, std::vector<std::filesystem::path> searchDirectories = {}, const std::map<std::string, std::string>& overwriteParameters = {});
     ~YamlParser() override = default;
 
+    // allow derived access to all Get
+    using cppParser::Factory::Get;
     /***
      * Direct creation using a yaml string
      * @param yamlString
