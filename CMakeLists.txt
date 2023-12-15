@@ -9,6 +9,9 @@ set(CMAKE_CXX_STANDARD 17)
 # Create the project
 add_library(cppParserLibrary OBJECT)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g -O0")
+add_link_options(-fsanitize=address)
+
 # make cache variables for install destinations
 include(GNUInstallDirs)
 
@@ -132,3 +135,7 @@ export(EXPORT cppParserLibraryTargets
 # set library properties
 set_property(TARGET cppParserLibrary PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property(TARGET yaml-cpp PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+add_executable(asanTest main.cpp)
+target_link_libraries(asanTest PUBLIC cppParserLibrary gtest gmock yaml-cpp)
+
